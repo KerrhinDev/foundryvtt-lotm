@@ -59,7 +59,7 @@
   ],
   "background": "systems/lotm/assets/banner.webp",
   "socket": false,
-  "version": "1.1.3",
+  "version": "1.1.4",
   "documentTypes": {
     "Actor": {
       "character": {},
