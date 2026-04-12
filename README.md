@@ -6,7 +6,7 @@
 
 *"La nebbia non mente mai, ma non dice mai tutta la verità."*
 
-[![Versione](https://img.shields.io/badge/versione-1.1.8-c9a227?style=for-the-badge&logo=github)](https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest)
+[![Versione](https://img.shields.io/badge/versione-1.1.9-c9a227?style=for-the-badge&logo=github)](https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest)
 [![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-V12–V14-7b5ea7?style=for-the-badge)](https://foundryvtt.com)
 [![Lingua](https://img.shields.io/badge/lingua-IT%20%7C%20EN-0b0c14?style=for-the-badge)](#)
 [![Licenza](https://img.shields.io/badge/licenza-MIT-green?style=for-the-badge)](LICENSE)
@@ -168,6 +168,13 @@ PR e issue benvenute! Se conosci bene i percorsi Beyonder e vuoi aiutare ad espa
 ---
 
 ## 📝 Changelog
+
+### v1.1.9
+- 🔧 Sheets: listener registrati con DOM nativo (`querySelectorAll` + `addEventListener`) — fix per V14 dove jQuery può non essere disponibile
+- 🔧 Dialog dadi: state tracking in tempo reale tramite `render` callback — lettura form non dipende più dal DOM al momento del click
+- 🔧 Hook `renderChatMessageHTML` aggiunto per V13/V14 (in aggiunta al vecchio `renderChatMessage` per V12)
+- 🔧 Rimosso campo `type` da tutti i `ChatMessage.create` — in V13/V14 `type` è riservato al sottotipo documento; `ROLL` è inferito automaticamente da `rolls`
+- 🔍 Aggiunto logging di debug in console per diagnosi problemi
 
 ### v1.1.8
 - 🔧 Fix critico V14: tiri attributi, abilità e avanzamento sequenza ora inviano correttamente messaggi in chat

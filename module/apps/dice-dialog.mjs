@@ -2,6 +2,11 @@
  * Dialog avanzato per i tiri dado di Lord of the Mysteries.
  * Supporta: bonus manuale, vantaggio/svantaggio, difficoltà, chat card colorata.
  * Compatibile con Foundry V12/V13/V14.
+ *
+ * Approccio V14-safe:
+ * - I valori del form vengono tracciati in tempo reale tramite event listener (render callback)
+ * - Il button callback legge dallo state object, NON dal DOM (che potrebbe essere già chiuso)
+ * - Nessun uso di jQuery (.find, .val, etc.)
  */
 
 const ATTR_LABELS = {
@@ -14,24 +19,6 @@ const ATTR_LABELS = {
   luck:        { label: "Fortuna",     abbr: "LCK", color: "#16a085" },
   education:   { label: "Educazione",  abbr: "EDU", color: "#7f8c8d" },
 };
-
-/**
- * Legge un valore da un form — compatibile jQuery e HTMLElement (V14).
- */
-function readForm(htmlOrEvent) {
-  // V14: primo argomento è l'Event, il form è nel target
-  let el = (htmlOrEvent instanceof Event)
-    ? htmlOrEvent.target?.closest("form") ?? document.querySelector(".lotm-dice-dialog")
-    : (htmlOrEvent instanceof HTMLElement ? htmlOrEvent : htmlOrEvent?.[0]);
-
-  if (!el) return {};
-  const q = (sel) => el.querySelector(sel);
-  return {
-    bonus:      parseInt(q('[name="bonus"]')?.value)      || 0,
-    mode:       q('[name="mode"]:checked')?.value          ?? "normal",
-    difficulty: parseInt(q('[name="difficulty"]')?.value)  || null,
-  };
-}
 
 /**
  * Invia la chat card del tiro.
@@ -52,7 +39,7 @@ async function sendRollCard(actor, info, totalMod, mainRoll, altRoll, mode, diff
     ? `<div class="ld-discarded">Scartato: ${altRoll.total}</div>`
     : "";
   let resultHtml = "";
-  if (difficulty !== null) {
+  if (difficulty !== null && difficulty > 0) {
     const ok = total >= difficulty;
     resultHtml = `<div class="ld-result ${ok ? "ld-success" : "ld-failure"}">${ok ? "✓ Successo" : "✗ Fallimento"} (DC ${difficulty})</div>`;
   }
@@ -76,7 +63,6 @@ async function sendRollCard(actor, info, totalMod, mainRoll, altRoll, mode, diff
       speaker: ChatMessage.getSpeaker({ actor }),
       content: chatContent,
       rolls:   [mainRoll],
-      type:    CONST.CHAT_MESSAGE_TYPES?.ROLL ?? CONST.CHAT_MESSAGE_STYLES?.ROLL ?? 0,
     });
   } catch(err) {
     console.error("LotM | ChatMessage.create errore:", err);
@@ -85,12 +71,12 @@ async function sendRollCard(actor, info, totalMod, mainRoll, altRoll, mode, diff
 }
 
 /**
- * Esegue il tiro dati a partire dai valori del form.
+ * Esegue il tiro dati a partire dai valori dello state object.
  */
-async function executeRoll(actor, info, mod, formData, resolve) {
+async function executeRoll(actor, info, mod, state, resolve) {
   try {
-    const { bonus, mode, difficulty } = formData;
-    const totalMod = mod + bonus;
+    const { bonus, mode, difficulty } = state;
+    const totalMod = mod + (bonus ?? 0);
 
     let mainRoll, altRoll;
     if (mode === "advantage" || mode === "disadvantage") {
@@ -110,7 +96,7 @@ async function executeRoll(actor, info, mod, formData, resolve) {
       await mainRoll.evaluate();
     }
 
-    await sendRollCard(actor, info, totalMod, mainRoll, altRoll, mode, difficulty, bonus);
+    await sendRollCard(actor, info, totalMod, mainRoll, altRoll, mode, difficulty, bonus ?? 0);
     resolve(mainRoll);
   } catch(err) {
     console.error("LotM | executeRoll errore:", err);
@@ -121,12 +107,19 @@ async function executeRoll(actor, info, mod, formData, resolve) {
 
 /**
  * Apre il dialog di tiro per un attributo e invia il risultato al chat.
- * Compatibile V12/V13/V14: legge il form tramite querySelector (non jQuery).
+ *
+ * Strategia V14-safe:
+ * - Lo state { bonus, mode, difficulty } viene aggiornato in tempo reale
+ *   tramite event listener registrati nel callback `render` del Dialog.
+ * - Il button callback legge SOLO dallo state — non tocca mai il DOM.
  */
 export async function openDiceDialog(actor, attrKey) {
   const info = ATTR_LABELS[attrKey] ?? { label: attrKey, abbr: "?", color: "#c9a227" };
   const mod  = actor.system[`${attrKey}Fin`] ?? 0;
   const sign = mod >= 0 ? "+" : "";
+
+  // Stato del form — aggiornato dai listener in render()
+  const state = { bonus: 0, mode: "normal", difficulty: null };
 
   const content = `
     <form class="lotm-dice-dialog">
@@ -164,15 +157,37 @@ export async function openDiceDialog(actor, attrKey) {
         roll: {
           icon:  '<i class="fas fa-dice-d6"></i>',
           label: "Tira!",
-          // Compatibile V12/V13 (html=jQuery) e V14 (html=Event o HTMLElement)
-          callback: async (html) => {
-            const formData = readForm(html);
-            await executeRoll(actor, info, mod, formData, resolve);
+          // Il callback NON legge dal DOM — usa lo state pre-aggiornato
+          callback: async () => {
+            await executeRoll(actor, info, mod, state, resolve);
           },
         },
         cancel: { label: "Annulla", callback: () => resolve(null) },
       },
       default: "roll",
+      // render() viene chiamato da Dialog dopo che l'HTML è nel DOM
+      // Qui registriamo i listener che aggiornano lo state in tempo reale
+      render: (html) => {
+        // html può essere jQuery (V12/V13) o HTMLElement (V14)
+        const root = (html instanceof HTMLElement) ? html : (html?.[0] ?? null);
+        if (!root) return;
+
+        const bonusInput = root.querySelector('[name="bonus"]');
+        const diffInput  = root.querySelector('[name="difficulty"]');
+        const modeInputs = root.querySelectorAll('[name="mode"]');
+
+        if (bonusInput) {
+          bonusInput.addEventListener("input",  () => { state.bonus = parseInt(bonusInput.value) || 0; });
+          bonusInput.addEventListener("change", () => { state.bonus = parseInt(bonusInput.value) || 0; });
+        }
+        if (diffInput) {
+          diffInput.addEventListener("input",  () => { state.difficulty = parseInt(diffInput.value) || null; });
+          diffInput.addEventListener("change", () => { state.difficulty = parseInt(diffInput.value) || null; });
+        }
+        modeInputs.forEach(radio => {
+          radio.addEventListener("change", () => { if (radio.checked) state.mode = radio.value; });
+        });
+      },
     }, { classes: ["lotm-dialog", "dialog"] }).render(true);
   });
 }
@@ -200,7 +215,6 @@ export async function openGenericRoll(actor, formula, label = "Tiro dado") {
       speaker: actor ? ChatMessage.getSpeaker({ actor }) : {},
       content: chatContent,
       rolls:   [roll],
-      type:    CONST.CHAT_MESSAGE_TYPES?.ROLL ?? CONST.CHAT_MESSAGE_STYLES?.ROLL ?? 0,
     });
 
     return roll;

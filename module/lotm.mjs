@@ -17,7 +17,7 @@ import { LotMTarotApp }      from "./apps/tarot-app.mjs";
    INIT
 ══════════════════════════════════════════════════════════════════ */
 Hooks.once("init", () => {
-  console.log("LotM | Inizializzazione del sistema Lord of the Mysteries v1.1.0");
+  console.log("LotM | Inizializzazione del sistema Lord of the Mysteries v1.1.9");
 
   // ── Esponi utilità globali ────────────────────────────────────
   game.lotm = {
@@ -119,7 +119,7 @@ Hooks.once("init", () => {
     "systems/lotm/templates/apps/tarot.hbs",
   ]);
 
-  console.log("LotM | Sistema inizializzato con successo");
+  console.log("LotM | Sistema inizializzato con successo v1.1.9");
 });
 
 /* ══════════════════════════════════════════════════════════════════
@@ -140,11 +140,20 @@ Hooks.once("ready", () => {
 
 /* ══════════════════════════════════════════════════════════════════
    CHAT MESSAGE (stile messaggi LotM)
+   Usiamo entrambi gli hook per coprire V12 (renderChatMessage)
+   e V13/V14 (renderChatMessageHTML).
 ══════════════════════════════════════════════════════════════════ */
+
+// V12 — html è jQuery
 Hooks.on("renderChatMessage", (message, html) => {
   if (!message.rolls?.length) return;
-  // Supporta sia jQuery che HTMLElement (V14)
   if (typeof html?.addClass === "function") html.addClass("lotm-roll-message");
   else if (html instanceof HTMLElement) html.classList.add("lotm-roll-message");
   else if (html?.[0] instanceof HTMLElement) html[0].classList.add("lotm-roll-message");
+});
+
+// V13/V14 — html è HTMLElement nativo
+Hooks.on("renderChatMessageHTML", (message, html) => {
+  if (!message.rolls?.length) return;
+  if (html instanceof HTMLElement) html.classList.add("lotm-roll-message");
 });

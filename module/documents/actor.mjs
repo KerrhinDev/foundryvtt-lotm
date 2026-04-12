@@ -99,6 +99,7 @@ export class LotMActor extends Actor {
     });
 
     // Chat card di avanzamento
+    console.log("LotM | advanceSequence — creo ChatMessage per:", this.name, "→ Seq", newSeq);
     try {
       await ChatMessage.create({
         speaker: ChatMessage.getSpeaker({ actor: this }),
@@ -121,8 +122,10 @@ export class LotMActor extends Actor {
     } catch(err) {
       console.error("LotM | advanceSequence ChatMessage errore:", err);
       ui.notifications.error(`LotM — Errore chat: ${err.message}`);
+      return;
     }
 
+    console.log("LotM | advanceSequence — ChatMessage inviato con successo");
     ui.notifications.info(`${this.name} ha avanzato a Sequenza ${newSeq} — ${newName}!`);
   }
 }

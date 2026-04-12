@@ -28,7 +28,6 @@ export class LotMNPCSheet extends ActorSheet {
 
     context.threatStars = "★".repeat(Math.min(sys.threat ?? 1, 10));
 
-    // Items
     const items = this.actor.items.contents;
     context.abilities = items.filter(i => i.type === "ability");
 
@@ -38,10 +37,17 @@ export class LotMNPCSheet extends ActorSheet {
   /** @override */
   activateListeners(html) {
     super.activateListeners(html);
+
+    // Ottieni l'elemento root — compatibile jQuery (V12/V13) e HTMLElement nativo (V14)
+    const root = (html instanceof HTMLElement) ? html : (html?.[0] ?? null);
+    if (!root) { console.error("LotM | NPC activateListeners: root element non trovato"); return; }
+
+    const on = (sel, evt, fn) => root.querySelectorAll(sel).forEach(el => el.addEventListener(evt, fn));
+
     if (!this.isEditable) return;
 
     // Tiro attributo NPC
-    html.find(".npc-attr-roll").on("click", ev => {
+    on(".npc-attr-roll", "click", ev => {
       ev.preventDefault();
       const attrKey = ev.currentTarget.dataset.attr;
       const val     = this.actor.system[attrKey] ?? 0;
@@ -50,7 +56,7 @@ export class LotMNPCSheet extends ActorSheet {
     });
 
     // Item create
-    html.find(".item-create").on("click", async ev => {
+    on(".item-create", "click", async ev => {
       const [item] = await this.actor.createEmbeddedDocuments("Item", [
         { name: "Nuova Abilità", type: "ability" }
       ]);
@@ -58,21 +64,21 @@ export class LotMNPCSheet extends ActorSheet {
     });
 
     // Item edit
-    html.find(".item-edit").on("click", ev => {
+    on(".item-edit", "click", ev => {
       const li = ev.currentTarget.closest("[data-item-id]");
-      this.actor.items.get(li.dataset.itemId)?.sheet.render(true);
+      this.actor.items.get(li?.dataset.itemId)?.sheet.render(true);
     });
 
     // Item use
-    html.find(".item-use").on("click", ev => {
+    on(".item-use", "click", ev => {
       const li = ev.currentTarget.closest("[data-item-id]");
-      this.actor.items.get(li.dataset.itemId)?.use();
+      this.actor.items.get(li?.dataset.itemId)?.use();
     });
 
     // Item delete
-    html.find(".item-delete").on("click", async ev => {
+    on(".item-delete", "click", async ev => {
       const li   = ev.currentTarget.closest("[data-item-id]");
-      const item = this.actor.items.get(li.dataset.itemId);
+      const item = this.actor.items.get(li?.dataset.itemId);
       if (!item) return;
       const ok = await Dialog.confirm({
         title: "Elimina",

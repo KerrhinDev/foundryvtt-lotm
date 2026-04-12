@@ -28,7 +28,6 @@ export class LotMCharacterSheet extends ActorSheet {
       context.isNpc = this.actor.type === "npc";
       context.isEditable = this.isEditable;
 
-      // Attributi con finale calcolato per il template
       context.attrs = {
         strength:    { ...sys.strength,    fin: sys.strFin,  key: "strength",    label: "Forza",       abbr: "STR" },
         agility:     { ...sys.agility,     fin: sys.aglFin,  key: "agility",     label: "Agilità",     abbr: "AGL" },
@@ -42,7 +41,6 @@ export class LotMCharacterSheet extends ActorSheet {
 
       context.attributeValue = sys.attributeValue;
 
-      // Difese calcolate
       context.defense = {
         physical:   sys.physDefense,
         willpower:  sys.willDefense,
@@ -54,7 +52,6 @@ export class LotMCharacterSheet extends ActorSheet {
         mythicForm: sys.defenseExtras?.mythicForm ?? "",
       };
 
-      // Sequenze disponibili per select (include "Senza Sequenza" in cima)
       context.sequenceOptions = [
         { value: 10, label: "Senza Sequenza", selected: sys.sequenceNumber === 10 },
         ...SEQUENCE_TABLE.map(s => ({
@@ -64,13 +61,9 @@ export class LotMCharacterSheet extends ActorSheet {
         })),
       ];
 
-      // Info sequenza corrente
       context.seqInfo = sys.currentSequenceInfo;
-
-      // Tabella sequenze completa per reference
       context.sequenceTable = SEQUENCE_TABLE;
 
-      // Items raggruppati per tipo
       const items = this.actor.items.contents;
       context.abilities  = items.filter(i => i.type === "ability");
       context.equipment  = items.filter(i => i.type === "equipment");
@@ -86,54 +79,59 @@ export class LotMCharacterSheet extends ActorSheet {
   activateListeners(html) {
     super.activateListeners(html);
 
+    // Ottieni l'elemento root — compatibile jQuery (V12/V13) e HTMLElement nativo (V14)
+    const root = (html instanceof HTMLElement) ? html : (html?.[0] ?? null);
+    console.log("LotM | CharacterSheet activateListeners — html type:", typeof html, "| isJQuery:", typeof html?.find === "function", "| root:", root?.tagName ?? "NULL");
+    if (!root) { console.error("LotM | activateListeners: root element non trovato"); return; }
+
+    // Helper: registra un listener su tutti gli elementi che corrispondono al selettore
+    const on = (sel, evt, fn) => root.querySelectorAll(sel).forEach(el => el.addEventListener(evt, fn));
+
     if (!this.isEditable) return;
 
-    // Tiro attributo (clic sul nome attributo)
-    html.find(".attr-roll").on("click", this._onRollAttribute.bind(this));
+    // Tiro attributo
+    on(".attr-roll", "click", this._onRollAttribute.bind(this));
 
-    // Aggiungi skill
-    html.find(".skill-add").on("click", this._onSkillAdd.bind(this));
+    // Skill
+    on(".skill-add",    "click", this._onSkillAdd.bind(this));
+    on(".skill-delete", "click", this._onSkillDelete.bind(this));
 
-    // Rimuovi skill
-    html.find(".skill-delete").on("click", this._onSkillDelete.bind(this));
+    // Item create
+    on(".item-create", "click", this._onItemCreate.bind(this));
 
-    // Aggiungi item (abilità / equipment)
-    html.find(".item-create").on("click", this._onItemCreate.bind(this));
+    // Item use
+    on(".item-use", "click", this._onItemUse.bind(this));
 
-    // Usa item
-    html.find(".item-use").on("click", this._onItemUse.bind(this));
-
-    // Modifica item
-    html.find(".item-edit").on("click", ev => {
+    // Item edit
+    on(".item-edit", "click", ev => {
       const li = ev.currentTarget.closest("[data-item-id]");
-      const item = this.actor.items.get(li.dataset.itemId);
+      const item = this.actor.items.get(li?.dataset.itemId);
       item?.sheet.render(true);
     });
 
-    // Cancella item
-    html.find(".item-delete").on("click", async ev => {
+    // Item delete
+    on(".item-delete", "click", async ev => {
       const li = ev.currentTarget.closest("[data-item-id]");
-      const item = this.actor.items.get(li.dataset.itemId);
-      if (item) {
-        const confirmed = await Dialog.confirm({
-          title: "Elimina Elemento",
-          content: `<p>Eliminare <strong>${item.name}</strong>?</p>`,
-        });
-        if (confirmed) item.delete();
-      }
+      const item = this.actor.items.get(li?.dataset.itemId);
+      if (!item) return;
+      const confirmed = await Dialog.confirm({
+        title: "Elimina Elemento",
+        content: `<p>Eliminare <strong>${item.name}</strong>?</p>`,
+      });
+      if (confirmed) item.delete();
     });
 
-    // Tiro dadi personalizzato
-    html.find(".roll-dice").on("click", this._onRollDice.bind(this));
+    // Roll dice generico
+    on(".roll-dice", "click", this._onRollDice.bind(this));
 
-    // Bottone avanzamento Sequenza
-    html.find(".btn-advance-sequence").on("click", ev => {
+    // Avanzamento Sequenza
+    on(".btn-advance-sequence", "click", ev => {
       ev.preventDefault();
       this.actor.advanceSequence();
     });
 
     // Sequence select → aggiorna nome
-    html.find('select[name="system.sequenceNumber"]').on("change", ev => {
+    on('select[name="system.sequenceNumber"]', "change", ev => {
       const num = parseInt(ev.target.value);
       if (num === 10) {
         this.actor.update({ "system.sequenceName": "Senza Sequenza" });
@@ -166,7 +164,7 @@ export class LotMCharacterSheet extends ActorSheet {
 
   async _onSkillDelete(ev) {
     ev.preventDefault();
-    const idx = parseInt(ev.currentTarget.closest("[data-index]").dataset.index);
+    const idx = parseInt(ev.currentTarget.closest("[data-index]")?.dataset.index);
     const skills = foundry.utils.deepClone(this.actor.system.skills ?? []);
     skills.splice(idx, 1);
     await this.actor.update({ "system.skills": skills });
@@ -186,7 +184,8 @@ export class LotMCharacterSheet extends ActorSheet {
   async _onItemUse(ev) {
     ev.preventDefault();
     const li = ev.currentTarget.closest("[data-item-id]");
-    const item = this.actor.items.get(li.dataset.itemId);
+    const item = this.actor.items.get(li?.dataset.itemId);
+    console.log("LotM | item use:", item?.name, "| type:", item?.type);
     await item?.use();
   }
 }

@@ -60,11 +60,13 @@ export class LotMItem extends Item {
       </div>
     `;
 
+    console.log("LotM | item.use() — creo ChatMessage per:", this.name);
     try {
-      await ChatMessage.create({
+      const msg = await ChatMessage.create({
         speaker: this.actor ? ChatMessage.getSpeaker({ actor: this.actor }) : {},
         content,
       });
+      console.log("LotM | item.use() — messaggio creato:", msg?.id);
     } catch(err) {
       console.error("LotM | item.use() ChatMessage errore:", err);
       ui.notifications.error(`LotM — Errore chat: ${err.message}`);
