@@ -86,8 +86,6 @@ export class LotMActor extends Actor {
           </p>
         </div>
       `,
-      yes: "✦ Avanza",
-      no:  "Annulla",
     });
 
     if (!confirmed) return;
