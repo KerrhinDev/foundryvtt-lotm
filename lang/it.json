@@ -1,0 +1,36 @@
+{
+  "LOTM": {
+    "SheetLabel": {
+      "Character": "Personaggio LotM",
+      "NPC": "PNG LotM"
+    },
+    "Attributes": {
+      "strength":    "Forza",
+      "agility":     "Agilità",
+      "willpower":   "Volontà",
+      "physique":    "Fisico",
+      "charisma":    "Carisma",
+      "inspiration": "Ispirazione",
+      "luck":        "Fortuna",
+      "education":   "Educazione"
+    },
+    "Abbr": {
+      "strength":    "FOR",
+      "agility":     "AGI",
+      "willpower":   "VOL",
+      "physique":    "FIS",
+      "charisma":    "CAR",
+      "inspiration": "ISP",
+      "luck":        "FOR",
+      "education":   "EDU"
+    },
+    "Tabs": {
+      "overview":  "Panoramica",
+      "defense":   "Difesa",
+      "skills":    "Abilità",
+      "abilities": "Poteri",
+      "inventory": "Inventario",
+      "notes":     "Note"
+    }
+  }
+}

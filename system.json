@@ -1,0 +1,58 @@
+{
+  "id": "lotm",
+  "title": "Lord of the Mysteries",
+  "description": "Sistema GdR basato su Lord of the Mysteries (Il Signore dei Misteri). Include scheda personaggio completa con attributi, sequenze, abilità e sistema di dadi.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "12",
+    "verified": "14"
+  },
+  "authors": [
+    {
+      "name": "KerrhinDev",
+      "url": "https://github.com/KerrhinDev"
+    }
+  ],
+  "url": "https://github.com/KerrhinDev/foundryvtt-lotm",
+  "manifest": "https://raw.githubusercontent.com/KerrhinDev/foundryvtt-lotm/main/system.json",
+  "download": "https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest/download/lotm.zip",
+  "changelog": "https://github.com/KerrhinDev/foundryvtt-lotm/releases",
+  "esmodules": [
+    "module/lotm.mjs"
+  ],
+  "styles": [
+    "css/lotm.css"
+  ],
+  "languages": [
+    {
+      "lang": "it",
+      "name": "Italiano",
+      "path": "lang/it.json"
+    },
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "packs": [
+    {
+      "name": "lotm-abilities",
+      "label": "Abilità dei Percorsi LotM",
+      "path": "packs/lotm-abilities",
+      "type": "Item",
+      "system": "lotm"
+    }
+  ],
+  "socket": false,
+  "documentTypes": {
+    "Actor": {
+      "character": {},
+      "npc": {}
+    },
+    "Item": {
+      "ability": {},
+      "equipment": {}
+    }
+  }
+}

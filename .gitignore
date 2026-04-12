@@ -1,0 +1,13 @@
+# Claude Code internal files
+.claude/
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# Foundry VTT generated files
+*.db
+*.db-journal
+
+# Node (if tools are added later)
+node_modules/

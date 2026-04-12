@@ -1,0 +1,517 @@
+<form class="lotm-sheet" autocomplete="off">
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+       DECORATIVE BANNER
+  ═══════════════════════════════════════════════════════════════════ --}}
+  <div class="sheet-banner">✦ Scheda dell'Oltre-Umano ✦ Lord of the Mysteries ✦</div>
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+       HEADER — Victorian document style
+  ═══════════════════════════════════════════════════════════════════ --}}
+  <header class="sheet-header">
+
+    {{!-- Portrait with ornate CSS frame --}}
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" alt="{{actor.name}}"
+           data-edit="img" title="Cambia ritratto">
+    </div>
+
+    <div class="header-fields">
+
+      {{!-- Row 1: Name & Attr Value --}}
+      <div class="header-row">
+        <div class="field-group">
+          <label>Cognome</label>
+          <input type="text" name="system.surname" value="{{system.surname}}" placeholder="Cognome">
+        </div>
+        <div class="field-group wide">
+          <label>Nome</label>
+          <input type="text" name="system.characterName" value="{{system.characterName}}" placeholder="Nome">
+        </div>
+        <div class="attr-value-badge" title="Valore Attributi Totale">
+          <span class="av-label">Val. Attr.</span>
+          <span class="av-num">{{attributeValue}}</span>
+        </div>
+        {{!-- Sequence badge (tarot card style) --}}
+        <div class="sequence-badge" title="Sequenza attuale">
+          <span class="seq-badge-label">Sequenza</span>
+          <span class="seq-badge-number">{{system.sequenceNumber}}</span>
+          <span class="seq-badge-name">{{system.pathway}}</span>
+        </div>
+      </div>
+
+      {{!-- Row 2: Demographics --}}
+      <div class="header-row">
+        <div class="field-group">
+          <label>Giocatore</label>
+          <input type="text" name="system.player" value="{{system.player}}" placeholder="Giocatore">
+        </div>
+        <div class="field-group">
+          <label>Razza</label>
+          <input type="text" name="system.race" value="{{system.race}}" placeholder="Razza">
+        </div>
+        <div class="field-group">
+          <label>Età</label>
+          <input type="text" name="system.age" value="{{system.age}}" placeholder="—">
+        </div>
+        <div class="field-group">
+          <label>Genere</label>
+          <input type="text" name="system.gender" value="{{system.gender}}" placeholder="—">
+        </div>
+      </div>
+
+      {{!-- Row 3: Profession & Sequence select --}}
+      <div class="header-row">
+        <div class="field-group wide">
+          <label>Occupazione</label>
+          <input type="text" name="system.occupation" value="{{system.occupation}}" placeholder="Occupazione / Professione">
+        </div>
+        <div class="field-group wide">
+          <label>Percorso / Pathway</label>
+          <input type="text" name="system.pathway" value="{{system.pathway}}" placeholder="Percorso">
+        </div>
+        <div class="field-group seq-group">
+          <label>Grado Sequenza</label>
+          <select name="system.sequenceNumber">
+            {{#each sequenceOptions}}
+              <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+
+    </div>{{!-- /header-fields --}}
+  </header>
+
+  {{!-- ═══════════════════════════════════════════════════════════════
+       TABS — stylish Victorian navigation
+  ═══════════════════════════════════════════════════════════════════ --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="overview">⊕ Panoramica</a>
+    <a class="item" data-tab="defense">⚔ Difesa</a>
+    <a class="item" data-tab="skills">✎ Abilità</a>
+    <a class="item" data-tab="abilities">✦ Poteri</a>
+    <a class="item" data-tab="inventory">⚙ Inventario</a>
+    <a class="item" data-tab="notes">📜 Note</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    {{!-- ═══════════════════════════════════════════════════════════
+         TAB: PANORAMICA
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="tab overview" data-group="primary" data-tab="overview">
+
+      {{!-- ── ATTRIBUTI — Card Grid ──────────────────────────────── --}}
+      <div class="section-title">Attributi — Fondamentali</div>
+
+      <div class="attrs-cards-grid">
+        {{#each attrs as |attr key|}}
+        <div class="attr-card attr-roll" data-attr="{{attr.key}}"
+             title="Tira 2d6 + {{attr.fin}} — {{attr.label}}">
+          <div class="attr-abbr">{{attr.abbr}}</div>
+          <div class="attr-fin-val">{{attr.fin}}</div>
+          <div class="attr-full-name">{{attr.label}}</div>
+          <div class="attr-divider"></div>
+          <div class="attr-sub-inputs">
+            <input type="number" name="system.{{attr.key}}.found" value="{{attr.found}}"
+                   title="Fondazione" onclick="event.stopPropagation()">
+            <input type="number" name="system.{{attr.key}}.bey"   value="{{attr.bey}}"
+                   title="Oltre" onclick="event.stopPropagation()">
+            <input type="number" name="system.{{attr.key}}.corr"  value="{{attr.corr}}"
+                   title="Correzione" onclick="event.stopPropagation()">
+            <input type="number" name="system.{{attr.key}}.bonus" value="{{attr.bonus}}"
+                   title="Bonus oggetti/abilità" onclick="event.stopPropagation()">
+          </div>
+          <div class="attr-sub-labels">
+            <span>Fon</span><span>Olt</span><span>Cor</span><span>Bon</span>
+          </div>
+        </div>
+        {{/each}}
+      </div>
+
+      {{!-- ── RISORSE ─────────────────────────────────────────────── --}}
+      <div class="section-title">Risorse Vitali</div>
+
+      <div class="resources-grid">
+
+        {{!-- VITA --}}
+        <div class="resource-block res-vita" style="--res-color:#c05050;--res-color-light:#e07070;">
+          <div class="res-title">⬥ Vita</div>
+          <div class="res-bar-row">
+            <input type="number" name="system.life.value" value="{{system.life.value}}" class="res-cur">
+            <span class="res-sep">/</span>
+            <input type="number" name="system.life.max"   value="{{system.life.max}}"  class="res-max">
+          </div>
+          <div class="res-bar">
+            <div class="res-bar-fill" style="width: {{pct system.life.value system.life.max}}%"></div>
+          </div>
+          <div class="res-sub-row">
+            <label>Perdita</label>
+            <input type="number" name="system.life.loss" value="{{system.life.loss}}">
+            <label>Cura</label>
+            <input type="number" name="system.life.heal" value="{{system.life.heal}}">
+          </div>
+        </div>
+
+        {{!-- SPIRITO --}}
+        <div class="resource-block res-spirito" style="--res-color:#5070c0;--res-color-light:#7090e0;">
+          <div class="res-title">⬥ Spirito</div>
+          <div class="res-bar-row">
+            <input type="number" name="system.spiritual.value" value="{{system.spiritual.value}}" class="res-cur">
+            <span class="res-sep">/</span>
+            <input type="number" name="system.spiritual.max"   value="{{system.spiritual.max}}"  class="res-max">
+          </div>
+          <div class="res-bar">
+            <div class="res-bar-fill" style="width: {{pct system.spiritual.value system.spiritual.max}}%"></div>
+          </div>
+          <div class="res-sub-row">
+            <label>Scarico</label>
+            <input type="number" name="system.spiritual.loss" value="{{system.spiritual.loss}}">
+            <label>Cura</label>
+            <input type="number" name="system.spiritual.heal" value="{{system.spiritual.heal}}">
+          </div>
+        </div>
+
+        {{!-- RAZIONALITÀ --}}
+        <div class="resource-block res-razionalita" style="--res-color:#50a0c0;--res-color-light:#70c0e0;">
+          <div class="res-title">⬥ Razionalità</div>
+          <div class="res-bar-row">
+            <input type="number" name="system.rationality.value" value="{{system.rationality.value}}" class="res-cur">
+            <span class="res-sep">/</span>
+            <input type="number" name="system.rationality.max"   value="{{system.rationality.max}}"  class="res-max">
+          </div>
+          <div class="res-bar">
+            <div class="res-bar-fill" style="width: {{pct system.rationality.value system.rationality.max}}%"></div>
+          </div>
+          <div class="res-sub-row">
+            <label>Scarico</label>
+            <input type="number" name="system.rationality.loss" value="{{system.rationality.loss}}">
+            <label>Cura</label>
+            <input type="number" name="system.rationality.heal" value="{{system.rationality.heal}}">
+          </div>
+        </div>
+
+        {{!-- FORTUNA --}}
+        <div class="resource-block res-fortuna" style="--res-color:#c9a227;--res-color-light:#f0c84a;">
+          <div class="res-title">⬥ Punti Fortuna</div>
+          <div class="res-bar-row">
+            <input type="number" name="system.luckPoints.value" value="{{system.luckPoints.value}}" class="res-cur">
+            <span class="res-sep">/</span>
+            <input type="number" name="system.luckPoints.max"   value="{{system.luckPoints.max}}"  class="res-max">
+          </div>
+          <div class="res-bar">
+            <div class="res-bar-fill" style="width: {{pct system.luckPoints.value system.luckPoints.max}}%"></div>
+          </div>
+          <div class="res-sub-row">
+            <label>Scarico</label>
+            <input type="number" name="system.luckPoints.drain" value="{{system.luckPoints.drain}}">
+            <label>Cura</label>
+            <input type="number" name="system.luckPoints.heal"  value="{{system.luckPoints.heal}}">
+          </div>
+        </div>
+
+      </div>{{!-- /resources-grid --}}
+
+      {{!-- ── SEQUENZA RIFERIMENTO ───────────────────────────────── --}}
+      <div class="section-title">Tabella Sequenze — Riferimento</div>
+      <table class="seq-table">
+        <thead>
+          <tr>
+            <th>Seq.</th>
+            <th>Dig.</th>
+            <th>Bonus CHA</th>
+            <th>STR min.</th>
+            <th>Formula Valore</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each sequenceTable as |row|}}
+          <tr class="{{#if (eq row.seq ../system.sequenceNumber)}}current-seq{{/if}}">
+            <td>{{row.seq}}</td>
+            <td>{{row.dig}}</td>
+            <td>{{row.chrBonus}}</td>
+            <td>{{row.strReq}}</td>
+            <td>
+              <span class="roll-dice clickable"
+                    data-formula="{{row.val}}"
+                    data-label="Valore Seq.{{row.seq}}"
+                    title="Tira {{row.val}}">{{row.val}}</span>
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+
+    </div>{{!-- /tab overview --}}
+
+    {{!-- ═══════════════════════════════════════════════════════════
+         TAB: DIFESA
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="tab defense" data-group="primary" data-tab="defense">
+
+      <div class="section-title">Difese Calcolate</div>
+      <table class="defense-table">
+        <tbody>
+          <tr>
+            <th>Difesa Fisica</th>
+            <td class="def-value">{{defense.physical}}</td>
+            <td class="def-hint">10 + FIS + bonus</td>
+          </tr>
+          <tr>
+            <th>Difesa Volontà</th>
+            <td class="def-value">{{defense.willpower}}</td>
+            <td class="def-hint">10 + VOL + bonus</td>
+          </tr>
+          <tr>
+            <th>Resistenza</th>
+            <td class="def-value">{{defense.resistance}}</td>
+            <td class="def-hint">10 + FIS</td>
+          </tr>
+          <tr>
+            <th>Penetrazione Danni</th>
+            <td class="def-value">{{defense.dPen}}</td>
+            <td class="def-hint">10 + FIS + bonus</td>
+          </tr>
+          <tr>
+            <th>Ignora Evasione</th>
+            <td class="def-value">{{defense.ignEva}}</td>
+            <td class="def-hint">10 + FOR + bonus</td>
+          </tr>
+          <tr>
+            <th>Armatura</th>
+            <td class="def-value">{{defense.armor}}</td>
+            <td>
+              <input type="number" name="system.defenseExtras.armor"
+                     value="{{system.defenseExtras.armor}}" style="width:64px">
+            </td>
+          </tr>
+          <tr>
+            <th>Bonus Danno</th>
+            <td class="def-value dmg-bonus">
+              <span class="roll-dice clickable"
+                    data-formula="{{defense.dmgBonus}}"
+                    data-label="Bonus Danno"
+                    title="Tira {{defense.dmgBonus}}">
+                {{defense.dmgBonus}}
+              </span>
+            </td>
+            <td class="def-hint">da tabella FOR</td>
+          </tr>
+          <tr>
+            <th>Forma Mitica</th>
+            <td colspan="2">
+              <input type="text" name="system.defenseExtras.mythicForm"
+                     value="{{system.defenseExtras.mythicForm}}"
+                     placeholder="es. Bestia, Pianta, Meccanismo…"
+                     style="width:100%">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-title" style="margin-top:14px">Bonus Manuali Aggiuntivi</div>
+      <table class="defense-table">
+        <tbody>
+          <tr>
+            <th>Bonus Dif. Fisica</th>
+            <td><input type="number" name="system.defenseExtras.physBonus" value="{{system.defenseExtras.physBonus}}"></td>
+            <th>Bonus Dif. Volontà</th>
+            <td><input type="number" name="system.defenseExtras.willBonus" value="{{system.defenseExtras.willBonus}}"></td>
+          </tr>
+          <tr>
+            <th>Bonus Cura (Vita)</th>
+            <td><input type="number" name="system.defenseExtras.healingBonus" value="{{system.defenseExtras.healingBonus}}"></td>
+            <th>Bonus Pen. Danni</th>
+            <td><input type="number" name="system.defenseExtras.dPenBonus" value="{{system.defenseExtras.dPenBonus}}"></td>
+          </tr>
+          <tr>
+            <th>Bonus Ign. Eva.</th>
+            <td colspan="3"><input type="number" name="system.defenseExtras.ignEvaBonus" value="{{system.defenseExtras.ignEvaBonus}}"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="section-title" style="margin-top:14px">Tabella Bonus Danno — FOR</div>
+      <table class="dmg-bonus-table">
+        <thead>
+          <tr>
+            <th>FOR</th><th>Bonus</th>
+            <th>FOR</th><th>Bonus</th>
+            <th>FOR</th><th>Bonus</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>−2</td>
+            <td>6</td><td class="roll-dice clickable" data-formula="1d6"  data-label="Bonus Danno">+1D6</td>
+            <td>11</td><td class="roll-dice clickable" data-formula="2d8"  data-label="Bonus Danno">+2D8</td>
+          </tr>
+          <tr>
+            <td>2</td><td>−1</td>
+            <td>7</td><td class="roll-dice clickable" data-formula="1d8"  data-label="Bonus Danno">+1D8</td>
+            <td>12</td><td class="roll-dice clickable" data-formula="2d10" data-label="Bonus Danno">+2D10</td>
+          </tr>
+          <tr>
+            <td>3</td><td>0</td>
+            <td>8</td><td class="roll-dice clickable" data-formula="1d10" data-label="Bonus Danno">+1D10</td>
+            <td>13</td><td class="roll-dice clickable" data-formula="2d12" data-label="Bonus Danno">+2D12</td>
+          </tr>
+          <tr>
+            <td>4</td><td class="roll-dice clickable" data-formula="1d2"  data-label="Bonus Danno">+1D2</td>
+            <td>9</td><td class="roll-dice clickable" data-formula="1d12" data-label="Bonus Danno">+1D12</td>
+            <td>14</td><td class="roll-dice clickable" data-formula="3d8"  data-label="Bonus Danno">+3D8</td>
+          </tr>
+          <tr>
+            <td>5</td><td class="roll-dice clickable" data-formula="1d4"  data-label="Bonus Danno">+1D4</td>
+            <td>10</td><td class="roll-dice clickable" data-formula="2d6"  data-label="Bonus Danno">+2D6</td>
+            <td>15+</td><td class="roll-dice clickable" data-formula="3d10" data-label="Bonus Danno">+3D10+</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>{{!-- /tab defense --}}
+
+    {{!-- ═══════════════════════════════════════════════════════════
+         TAB: ABILITÀ
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="tab skills" data-group="primary" data-tab="skills">
+
+      <div class="skills-header">
+        <div class="section-title">Abilità & Competenze</div>
+        <button type="button" class="skill-add btn-small">✦ Aggiungi Abilità</button>
+      </div>
+
+      <table class="skills-table">
+        <thead>
+          <tr>
+            <th class="skill-name-col">Nome Abilità</th>
+            <th title="Educazione">Edu.</th>
+            <th title="Ispirazione">Ins.</th>
+            <th title="Extra">Ext.</th>
+            <th title="Pratica">Prat.</th>
+            <th title="Numero">Num.</th>
+            <th title="Correzione">Corr.</th>
+            <th class="skill-total-col" title="Totale">Tot.</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each system.skills as |skill idx|}}
+          <tr data-index="{{idx}}">
+            <td class="skill-name-col">
+              <input type="text" name="system.skills.{{idx}}.name" value="{{skill.name}}" placeholder="Nome abilità">
+            </td>
+            <td><input type="number" name="system.skills.{{idx}}.edu"  value="{{skill.edu}}"></td>
+            <td><input type="number" name="system.skills.{{idx}}.ins"  value="{{skill.ins}}"></td>
+            <td><input type="number" name="system.skills.{{idx}}.ext"  value="{{skill.ext}}"></td>
+            <td><input type="number" name="system.skills.{{idx}}.prac" value="{{skill.prac}}"></td>
+            <td><input type="number" name="system.skills.{{idx}}.numb" value="{{skill.numb}}"></td>
+            <td><input type="number" name="system.skills.{{idx}}.corr" value="{{skill.corr}}"></td>
+            <td class="skill-total">{{add (add (add skill.edu skill.ins) (add skill.ext skill.prac)) (add skill.numb skill.corr)}}</td>
+            <td><button type="button" class="skill-delete btn-icon" title="Rimuovi">✕</button></td>
+          </tr>
+          {{/each}}
+          {{#unless system.skills.length}}
+          <tr>
+            <td colspan="9" class="empty-row">
+              Nessuna abilità. Clicca "✦ Aggiungi Abilità" per iniziare.
+            </td>
+          </tr>
+          {{/unless}}
+        </tbody>
+      </table>
+
+      <div class="section-title" style="margin-top:18px">Proprietà Straordinarie</div>
+      <div class="editor-container">
+        <textarea name="system.extraordinaryProperties"
+                  class="lotm-textarea">{{system.extraordinaryProperties}}</textarea>
+      </div>
+
+    </div>{{!-- /tab skills --}}
+
+    {{!-- ═══════════════════════════════════════════════════════════
+         TAB: POTERI SOPRANNATURALI
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="tab abilities" data-group="primary" data-tab="abilities">
+
+      <div class="items-header">
+        <div class="section-title">Poteri Soprannaturali</div>
+        <button type="button" class="item-create btn-small" data-type="ability">✦ Aggiungi Potere</button>
+      </div>
+
+      <ul class="item-list abilities-list">
+        {{#each abilities as |item|}}
+        <li class="item" data-item-id="{{item.id}}">
+          <img class="item-img" src="{{item.img}}" alt="{{item.name}}">
+          <div class="item-name">
+            <strong>{{item.name}}</strong>
+            <span class="item-type-badge">{{item.system.abilityType}}</span>
+            {{#if item.system.cost}}<span class="item-cost">Costo: {{item.system.cost}}</span>{{/if}}
+          </div>
+          <div class="item-controls">
+            <button type="button" class="item-use btn-icon"    title="Usa">▶</button>
+            <button type="button" class="item-edit btn-icon"   title="Modifica">✎</button>
+            <button type="button" class="item-delete btn-icon" title="Elimina">✕</button>
+          </div>
+        </li>
+        {{/each}}
+        {{#unless abilities.length}}
+        <li class="empty-row">Nessun potere soprannaturale acquisito.</li>
+        {{/unless}}
+      </ul>
+
+    </div>{{!-- /tab abilities --}}
+
+    {{!-- ═══════════════════════════════════════════════════════════
+         TAB: INVENTARIO
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="tab inventory" data-group="primary" data-tab="inventory">
+
+      <div class="items-header">
+        <div class="section-title">Inventario & Equipaggiamento</div>
+        <button type="button" class="item-create btn-small" data-type="equipment">⚙ Aggiungi Oggetto</button>
+      </div>
+
+      <ul class="item-list equipment-list">
+        {{#each equipment as |item|}}
+        <li class="item {{#if item.system.equipped}}equipped{{/if}}" data-item-id="{{item.id}}">
+          <img class="item-img" src="{{item.img}}" alt="{{item.name}}">
+          <div class="item-name">
+            <strong>{{item.name}}</strong>
+            {{#if item.system.damage}}<span class="item-damage">⚔ {{item.system.damage}}</span>{{/if}}
+            {{#if item.system.armor}}<span class="item-armor">🛡 {{item.system.armor}}</span>{{/if}}
+            <span class="item-qty">×{{item.system.quantity}}</span>
+          </div>
+          <div class="item-controls">
+            <button type="button" class="item-edit btn-icon"   title="Modifica">✎</button>
+            <button type="button" class="item-delete btn-icon" title="Elimina">✕</button>
+          </div>
+        </li>
+        {{/each}}
+        {{#unless equipment.length}}
+        <li class="empty-row">Inventario vuoto.</li>
+        {{/unless}}
+      </ul>
+
+    </div>{{!-- /tab inventory --}}
+
+    {{!-- ═══════════════════════════════════════════════════════════
+         TAB: NOTE
+    ═══════════════════════════════════════════════════════════════ --}}
+    <div class="tab notes" data-group="primary" data-tab="notes">
+
+      <div class="section-title">Biografia & Storia</div>
+      <div class="editor-container">
+        <textarea name="system.biography" class="lotm-textarea" rows="8">{{system.biography}}</textarea>
+      </div>
+
+      <div class="section-title" style="margin-top:14px">Note del Personaggio</div>
+      <div class="editor-container">
+        <textarea name="system.notes" class="lotm-textarea" rows="8">{{system.notes}}</textarea>
+      </div>
+
+    </div>{{!-- /tab notes --}}
+
+  </section>{{!-- /sheet-body --}}
+</form>

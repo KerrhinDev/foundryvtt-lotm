@@ -1,0 +1,118 @@
+<form class="lotm-sheet item-sheet" autocomplete="off">
+  <header class="item-header">
+    <img class="item-portrait" src="{{item.img}}" alt="{{item.name}}" data-edit="img">
+    <div class="item-header-fields">
+      <input type="text" name="name" value="{{item.name}}" class="item-name-input" placeholder="Nome">
+      {{#if isAbility}}
+      <div class="field-row">
+        <label>Tipo</label>
+        <select name="system.abilityType">
+          {{#each abilityTypes as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.abilityType key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label>Sequenza</label>
+        <select name="system.sequence">
+          {{#times 10}}
+          <option value="{{this}}" {{#if (eq ../system.sequence this)}}selected{{/if}}>Seq. {{this}}</option>
+          {{/times}}
+        </select>
+      </div>
+      {{/if}}
+      {{#if isEquipment}}
+      <div class="field-row">
+        <label>Tipo</label>
+        <select name="system.equipmentType">
+          {{#each equipmentTypes as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.equipmentType key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label>Rarità</label>
+        <select name="system.rarity">
+          {{#each rarities as |label key|}}
+          <option value="{{key}}" {{#if (eq ../system.rarity key)}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </div>
+      {{/if}}
+    </div>
+  </header>
+
+  <div class="item-body">
+    {{#if isAbility}}
+    <div class="field-grid">
+      <div class="field-group">
+        <label>Percorso</label>
+        <input type="text" name="system.pathway" value="{{system.pathway}}" placeholder="Percorso">
+      </div>
+      <div class="field-group">
+        <label>Costo</label>
+        <input type="text" name="system.cost" value="{{system.cost}}" placeholder="es. 2 Spirito">
+      </div>
+      <div class="field-group">
+        <label>Gittata</label>
+        <input type="text" name="system.range" value="{{system.range}}" placeholder="es. 30m">
+      </div>
+      <div class="field-group">
+        <label>Durata</label>
+        <input type="text" name="system.duration" value="{{system.duration}}" placeholder="es. 1 turno">
+      </div>
+    </div>
+    <div class="field-group checkbox-group">
+      <label>
+        <input type="checkbox" name="system.ritual" {{#if system.ritual}}checked{{/if}}>
+        È un Rituale
+      </label>
+    </div>
+    {{/if}}
+
+    {{#if isEquipment}}
+    <div class="field-grid">
+      <div class="field-group">
+        <label>Danno</label>
+        <input type="text" name="system.damage" value="{{system.damage}}" placeholder="es. 1D8">
+      </div>
+      <div class="field-group">
+        <label>Armatura</label>
+        <input type="number" name="system.armor" value="{{system.armor}}">
+      </div>
+      <div class="field-group">
+        <label>Quantità</label>
+        <input type="number" name="system.quantity" value="{{system.quantity}}" min="0">
+      </div>
+      <div class="field-group">
+        <label>Prezzo</label>
+        <input type="text" name="system.price" value="{{system.price}}" placeholder="es. 5 Sterlini">
+      </div>
+    </div>
+    <div class="field-group checkbox-group">
+      <label>
+        <input type="checkbox" name="system.equipped" {{#if system.equipped}}checked{{/if}}>
+        Equipaggiato
+      </label>
+    </div>
+    {{/if}}
+
+    <div class="section-title">
+      Descrizione
+      {{#if isEditable}}
+      <button type="button" class="btn-small desc-toggle" style="float:right;margin-top:-2px">✎ Modifica HTML</button>
+      {{/if}}
+    </div>
+    <div class="lotm-desc-container">
+      {{!-- Vista renderizzata (default) --}}
+      <div class="lotm-description-view">{{{enrichedDescription}}}</div>
+      {{!-- Textarea HTML sorgente (nascosta, si mostra col pulsante) --}}
+      {{#if isEditable}}
+      <textarea name="system.description" class="lotm-textarea lotm-desc-editor" style="display:none">{{system.description}}</textarea>
+      {{/if}}
+    </div>
+
+    {{#if isAbility}}
+    <div class="field-group" style="margin-top:8px">
+      <label>Note rapide</label>
+      <input type="text" name="system.notes" value="{{system.notes}}" placeholder="Note veloci…">
+    </div>
+    {{/if}}
+  </div>
+</form>

@@ -1,0 +1,26 @@
+{
+  "LOTM": {
+    "SheetLabel": {
+      "Character": "LotM Character",
+      "NPC": "LotM NPC"
+    },
+    "Attributes": {
+      "strength":    "Strength",
+      "agility":     "Agility",
+      "willpower":   "Willpower",
+      "physique":    "Physique",
+      "charisma":    "Charisma",
+      "inspiration": "Inspiration",
+      "luck":        "Luck",
+      "education":   "Education"
+    },
+    "Tabs": {
+      "overview":  "Overview",
+      "defense":   "Defense",
+      "skills":    "Skills",
+      "abilities": "Abilities",
+      "inventory": "Inventory",
+      "notes":     "Notes"
+    }
+  }
+}
