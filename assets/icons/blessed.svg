@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#0a0a00"/>
+  <!-- Outer glow rays -->
+  <g opacity="0.6">
+    <line x1="50" y1="5" x2="50" y2="18" stroke="#f0c84a" stroke-width="2"/>
+    <line x1="50" y1="82" x2="50" y2="95" stroke="#f0c84a" stroke-width="2"/>
+    <line x1="5" y1="50" x2="18" y2="50" stroke="#f0c84a" stroke-width="2"/>
+    <line x1="82" y1="50" x2="95" y2="50" stroke="#f0c84a" stroke-width="2"/>
+    <line x1="16" y1="16" x2="25" y2="25" stroke="#f0c84a" stroke-width="1.5"/>
+    <line x1="84" y1="16" x2="75" y2="25" stroke="#f0c84a" stroke-width="1.5"/>
+    <line x1="16" y1="84" x2="25" y2="75" stroke="#f0c84a" stroke-width="1.5"/>
+    <line x1="84" y1="84" x2="75" y2="75" stroke="#f0c84a" stroke-width="1.5"/>
+  </g>
+  <!-- Main circle -->
+  <circle cx="50" cy="50" r="28" fill="#3a2800" stroke="#c9a227" stroke-width="2"/>
+  <!-- Inner light -->
+  <circle cx="50" cy="50" r="20" fill="#c9a227" opacity="0.25"/>
+  <circle cx="50" cy="50" r="12" fill="#f0c84a" opacity="0.5"/>
+  <circle cx="50" cy="50" r="6"  fill="#fff8dc" opacity="0.8"/>
+  <!-- Cross/seal -->
+  <line x1="50" y1="34" x2="50" y2="66" stroke="#c9a227" stroke-width="2" opacity="0.8"/>
+  <line x1="34" y1="50" x2="66" y2="50" stroke="#c9a227" stroke-width="2" opacity="0.8"/>
+</svg>

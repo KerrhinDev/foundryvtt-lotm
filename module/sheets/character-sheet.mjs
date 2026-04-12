@@ -123,6 +123,12 @@ export class LotMCharacterSheet extends ActorSheet {
     // Tiro dadi personalizzato
     html.find(".roll-dice").on("click", this._onRollDice.bind(this));
 
+    // Bottone avanzamento Sequenza
+    html.find(".btn-advance-sequence").on("click", ev => {
+      ev.preventDefault();
+      this.actor.advanceSequence();
+    });
+
     // Sequence select → aggiorna nome
     html.find('select[name="system.sequenceNumber"]').on("change", ev => {
       const num = parseInt(ev.target.value);

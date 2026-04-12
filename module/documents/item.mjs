@@ -1,21 +1,62 @@
+const ABILITY_TYPE_LABELS = {
+  active:  "Attiva",
+  passive: "Passiva",
+  ritual:  "Rituale",
+  formula: "Formula / Pozione",
+};
+
+const ABILITY_TYPE_COLORS = {
+  active:  "#c9a227",
+  passive: "#7b5ea7",
+  ritual:  "#c0392b",
+  formula: "#27ae60",
+};
+
 export class LotMItem extends Item {
   /** @override */
   prepareData() {
     super.prepareData();
   }
 
+  /**
+   * Usa l'abilità: invia una chat card stilizzata con tutti i dettagli.
+   */
   async use() {
-    const sys = this.system;
-    const content = `<div class="lotm-chat-item">
-      <h3>${this.name}</h3>
-      ${sys.cost ? `<p><strong>Costo:</strong> ${sys.cost}</p>` : ""}
-      ${sys.range ? `<p><strong>Gittata:</strong> ${sys.range}</p>` : ""}
-      ${sys.duration ? `<p><strong>Durata:</strong> ${sys.duration}</p>` : ""}
-      <hr>
-      <div class="description">${sys.description ?? ""}</div>
-    </div>`;
+    const sys   = this.system;
+    const type  = sys.abilityType ?? "active";
+    const color = ABILITY_TYPE_COLORS[type] ?? "#c9a227";
+    const typeLabel = ABILITY_TYPE_LABELS[type] ?? type;
 
-    ChatMessage.create({
+    // Strappa HTML dalla descrizione per la chat card (mostra testo pulito)
+    const rawDesc = sys.description ?? "";
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = rawDesc;
+    const plainDesc = tempDiv.textContent?.trim() ?? "";
+    const shortDesc = plainDesc.length > 280
+      ? plainDesc.slice(0, 280).trimEnd() + "…"
+      : plainDesc;
+
+    const metaRows = [
+      sys.cost     ? `<div class="lrc-meta-row"><span class="lrc-meta-key">Costo</span><span class="lrc-meta-val">${sys.cost}</span></div>`     : "",
+      sys.range    ? `<div class="lrc-meta-row"><span class="lrc-meta-key">Gittata</span><span class="lrc-meta-val">${sys.range}</span></div>`    : "",
+      sys.duration ? `<div class="lrc-meta-row"><span class="lrc-meta-key">Durata</span><span class="lrc-meta-val">${sys.duration}</span></div>` : "",
+    ].filter(Boolean).join("");
+
+    const content = `
+      <div class="lotm-roll-card lotm-ability-card" style="--attr-color:${color}">
+        <div class="lrc-header">
+          <span class="lrc-actor">${this.actor?.name ?? ""}</span>
+          <span class="lrc-attr" style="color:${color}">${this.name}</span>
+        </div>
+        <div class="lac-type-badge" style="background:${color}22;border:1px solid ${color}60;color:${color}">
+          ${typeLabel}
+        </div>
+        ${metaRows ? `<div class="lac-meta">${metaRows}</div>` : ""}
+        ${shortDesc ? `<div class="lac-desc">${shortDesc}</div>` : ""}
+      </div>
+    `;
+
+    await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
       content,
     });

@@ -1,0 +1,173 @@
+<form class="lotm-sheet lotm-npc-sheet" autocomplete="off">
+
+  <div class="sheet-banner">✦ Scheda PNG — Lord of the Mysteries ✦</div>
+
+  {{!-- ═══ HEADER ═══ --}}
+  <header class="npc-header">
+    <div class="portrait-wrap">
+      <img class="actor-portrait" src="{{actor.img}}" alt="{{actor.name}}" data-edit="img" title="Cambia immagine">
+    </div>
+
+    <div class="npc-header-fields">
+      <div class="npc-name-row">
+        <input type="text" name="name" value="{{actor.name}}" class="npc-name-input" placeholder="Nome PNG">
+        <span class="threat-stars" title="Livello di minaccia {{system.threat}}">{{threatStars}}</span>
+      </div>
+
+      <div class="npc-meta-row">
+        <div class="field-group">
+          <label>Tipo</label>
+          <select name="system.npcType">
+            {{#each npcTypes as |label key|}}
+              <option value="{{key}}" {{#if (eq ../system.npcType key)}}selected{{/if}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Minaccia (1-10)</label>
+          <input type="number" name="system.threat" value="{{system.threat}}" min="1" max="10" style="width:56px">
+        </div>
+        <div class="field-group">
+          <label>Percorso</label>
+          <input type="text" name="system.pathway" value="{{system.pathway}}" placeholder="Percorso Beyonder">
+        </div>
+        <div class="field-group">
+          <label>Sequenza</label>
+          <input type="number" name="system.sequenceNumber" value="{{system.sequenceNumber}}" min="0" max="9" style="width:48px">
+        </div>
+        <div class="field-group">
+          <label>Titolo</label>
+          <input type="text" name="system.sequenceName" value="{{system.sequenceName}}" placeholder="es. Assassino">
+        </div>
+      </div>
+
+      {{!-- Barre risorse NPC —– grandi e visibili --}}
+      <div class="npc-res-row">
+        <div class="npc-res" style="--rc:#c05050">
+          <span class="npc-res-label">⬥ Vita</span>
+          <input type="number" name="system.life.value" value="{{system.life.value}}" class="npc-res-val">
+          <span>/</span>
+          <input type="number" name="system.life.max" value="{{system.life.max}}" class="npc-res-max">
+          <div class="npc-res-bar"><div class="npc-res-fill" style="width:{{pct system.life.value system.life.max}}%"></div></div>
+        </div>
+        <div class="npc-res" style="--rc:#5070c0">
+          <span class="npc-res-label">⬥ Spirito</span>
+          <input type="number" name="system.spiritual.value" value="{{system.spiritual.value}}" class="npc-res-val">
+          <span>/</span>
+          <input type="number" name="system.spiritual.max" value="{{system.spiritual.max}}" class="npc-res-max">
+          <div class="npc-res-bar"><div class="npc-res-fill" style="width:{{pct system.spiritual.value system.spiritual.max}}%"></div></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{!-- ═══ TABS ═══ --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="stats">⚔ Statistiche</a>
+    <a class="item" data-tab="abilities">✦ Poteri</a>
+    <a class="item" data-tab="notes">📜 Note</a>
+  </nav>
+
+  <section class="sheet-body">
+
+    {{!-- TAB: STATISTICHE --}}
+    <div class="tab" data-group="primary" data-tab="stats">
+
+      <div class="npc-stats-grid">
+        {{!-- Attributi --}}
+        <div class="npc-attrs-block">
+          <div class="section-title">Attributi</div>
+          <table class="npc-attr-table">
+            <tbody>
+              <tr>
+                <td class="npc-attr-label npc-attr-roll" data-attr="strength" data-label="Forza" title="Tira FOR">Forza (FOR)</td>
+                <td><input type="number" name="system.strength" value="{{system.strength}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label npc-attr-roll" data-attr="agility" data-label="Agilità" title="Tira AGI">Agilità (AGI)</td>
+                <td><input type="number" name="system.agility" value="{{system.agility}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label npc-attr-roll" data-attr="willpower" data-label="Volontà" title="Tira VOL">Volontà (VOL)</td>
+                <td><input type="number" name="system.willpower" value="{{system.willpower}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label npc-attr-roll" data-attr="physique" data-label="Fisico" title="Tira FIS">Fisico (FIS)</td>
+                <td><input type="number" name="system.physique" value="{{system.physique}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label npc-attr-roll" data-attr="charisma" data-label="Carisma" title="Tira CAR">Carisma (CAR)</td>
+                <td><input type="number" name="system.charisma" value="{{system.charisma}}"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {{!-- Difesa --}}
+        <div class="npc-defense-block">
+          <div class="section-title">Difesa</div>
+          <table class="npc-attr-table">
+            <tbody>
+              <tr>
+                <td class="npc-attr-label">Dif. Fisica</td>
+                <td><input type="number" name="system.physDefense" value="{{system.physDefense}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label">Dif. Volontà</td>
+                <td><input type="number" name="system.willDefense" value="{{system.willDefense}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label">Resistenza</td>
+                <td><input type="number" name="system.resistance" value="{{system.resistance}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label">Armatura</td>
+                <td><input type="number" name="system.armor" value="{{system.armor}}"></td>
+              </tr>
+              <tr>
+                <td class="npc-attr-label">Bonus Danno</td>
+                <td><input type="text" name="system.dmgBonus" value="{{system.dmgBonus}}" placeholder="0"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    {{!-- TAB: POTERI --}}
+    <div class="tab" data-group="primary" data-tab="abilities">
+      <div class="items-header">
+        <div class="section-title">Poteri Soprannaturali</div>
+        <button type="button" class="item-create btn-small">✦ Aggiungi</button>
+      </div>
+      <ul class="item-list">
+        {{#each abilities as |item|}}
+        <li class="item" data-item-id="{{item.id}}">
+          <img class="item-img" src="{{item.img}}" alt="{{item.name}}">
+          <div class="item-name">
+            <strong>{{item.name}}</strong>
+            <span class="item-type-badge">{{item.system.abilityType}}</span>
+            {{#if item.system.cost}}<span class="item-cost">Costo: {{item.system.cost}}</span>{{/if}}
+          </div>
+          <div class="item-controls">
+            <button type="button" class="item-use btn-icon" title="Usa">▶</button>
+            <button type="button" class="item-edit btn-icon" title="Modifica">✎</button>
+            <button type="button" class="item-delete btn-icon" title="Elimina">✕</button>
+          </div>
+        </li>
+        {{/each}}
+        {{#unless abilities.length}}
+        <li class="empty-row">Nessun potere assegnato.</li>
+        {{/unless}}
+      </ul>
+    </div>
+
+    {{!-- TAB: NOTE --}}
+    <div class="tab" data-group="primary" data-tab="notes">
+      <div class="section-title">Note & Comportamento</div>
+      <textarea name="system.notes" class="lotm-textarea" style="min-height:200px">{{system.notes}}</textarea>
+    </div>
+
+  </section>
+</form>

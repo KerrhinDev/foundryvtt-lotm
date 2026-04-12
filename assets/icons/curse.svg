@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="48" fill="#100a00"/>
+  <!-- Dark star / rune shape -->
+  <polygon points="50,10 61,35 88,35 66,53 74,80 50,63 26,80 34,53 12,35 39,35"
+           fill="#3d2000" stroke="#c9a227" stroke-width="2"/>
+  <!-- Inner star -->
+  <polygon points="50,24 57,40 75,40 61,50 67,66 50,56 33,66 39,50 25,40 43,40"
+           fill="#1a0f00" stroke="#8b6914" stroke-width="1"/>
+  <!-- Rune center -->
+  <circle cx="50" cy="50" r="8" fill="#c9a227" opacity="0.3"/>
+  <!-- Rune lines -->
+  <line x1="50" y1="35" x2="50" y2="65" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+  <line x1="35" y1="50" x2="65" y2="50" stroke="#c9a227" stroke-width="1.5" opacity="0.7"/>
+  <line x1="38" y1="38" x2="62" y2="62" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+  <line x1="62" y1="38" x2="38" y2="62" stroke="#c9a227" stroke-width="1" opacity="0.5"/>
+</svg>

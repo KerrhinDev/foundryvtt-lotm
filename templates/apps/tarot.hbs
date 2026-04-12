@@ -1,0 +1,41 @@
+<div class="lotm-tarot-container">
+
+  <div class="tarot-toolbar">
+    <span class="tarot-stats">
+      🂠 Mazzo: <strong>{{remainingCount}}</strong> rimanenti · Estratte: <strong>{{drawnCount}}</strong>
+    </span>
+    <button id="tarot-draw-random" class="tarot-btn">🎴 Pesca Casuale</button>
+    <button id="tarot-shuffle" class="tarot-btn tarot-btn-warn">♻ Mescola</button>
+  </div>
+
+  <div class="tarot-grid">
+    {{#each arcana as |card|}}
+    <div class="tarot-card {{#if card.isFlipped}}flipped{{/if}} {{#if card.isDrawn}}drawn{{/if}}"
+         data-index="{{card.index}}"
+         title="{{#unless card.isFlipped}}Clicca per rivelare{{else}}{{card.it}} — Percorso {{card.pathway}}{{/unless}}">
+
+      {{#if card.isFlipped}}
+        {{!-- FACCIA --}}
+        <div class="tarot-face" style="--card-color:{{card.color}}">
+          <div class="tarot-roman">{{card.roman}}</div>
+          <div class="tarot-name-it">{{card.it}}</div>
+          <div class="tarot-name-en">{{card.en}}</div>
+          <div class="tarot-pathway">✦ {{card.pathway}}</div>
+          <div class="tarot-actions">
+            <button class="tarot-send-chat" title="Invia al chat">💬</button>
+            <button class="tarot-facedown" title="Rimetti a faccia in giù">🔄</button>
+          </div>
+        </div>
+      {{else}}
+        {{!-- DORSO --}}
+        <div class="tarot-back">
+          <div class="tarot-back-symbol">✦</div>
+          <div class="tarot-back-text">{{#if card.isDrawn}}—{{else}}?{{/if}}</div>
+        </div>
+      {{/if}}
+
+    </div>
+    {{/each}}
+  </div>
+
+</div>

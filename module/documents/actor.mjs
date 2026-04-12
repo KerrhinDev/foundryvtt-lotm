@@ -1,10 +1,9 @@
 import { openDiceDialog, openGenericRoll } from "../apps/dice-dialog.mjs";
+import { SEQUENCE_TABLE } from "../data/actor-character.mjs";
 
 export class LotMActor extends Actor {
   /** @override */
-  prepareData() {
-    super.prepareData();
-  }
+  prepareData() { super.prepareData(); }
 
   /** @override */
   prepareBaseData() {}
@@ -14,18 +13,17 @@ export class LotMActor extends Actor {
 
   /**
    * Attributi tracciabili per le barre token.
-   * Restituisce { value, max } per le risorse principali.
    * @override
    */
   getBarAttribute(barName, { alternative } = {}) {
     const attr = alternative ?? barName;
     const mapping = {
-      bar1:       "life",
-      bar2:       "spiritual",
-      life:       "life",
-      spiritual:  "spiritual",
-      rationality:"rationality",
-      luckPoints: "luckPoints",
+      bar1:        "life",
+      bar2:        "spiritual",
+      life:        "life",
+      spiritual:   "spiritual",
+      rationality: "rationality",
+      luckPoints:  "luckPoints",
     };
     const key = mapping[attr];
     if (key && this.system?.[key]) {
@@ -38,8 +36,7 @@ export class LotMActor extends Actor {
   }
 
   /**
-   * Apre il dialog di tiro avanzato per un attributo.
-   * @param {string} attrKey
+   * Apre il dialog di tiro avanzato per un attributo (solo PG).
    */
   async rollAttribute(attrKey) {
     return openDiceDialog(this, attrKey);
@@ -47,10 +44,80 @@ export class LotMActor extends Actor {
 
   /**
    * Tira una formula generica con chat card stilizzata.
-   * @param {string} formula  es. "1D6", "2D10"
-   * @param {string} label
    */
   async rollDice(formula, label = "") {
     return openGenericRoll(this, formula, label);
+  }
+
+  /**
+   * Avanza il personaggio alla Sequenza successiva (numero più basso).
+   * Mostra un dialog di conferma e invia un messaggio al chat.
+   */
+  async advanceSequence() {
+    const sys = this.system;
+    const currentSeq = sys.sequenceNumber;
+
+    if (currentSeq == null || currentSeq <= 0) {
+      return void ui.notifications.warn("Il personaggio ha già raggiunto la Sequenza 0 — il culmine del percorso.");
+    }
+
+    const newSeq  = currentSeq - 1;
+    const newInfo = SEQUENCE_TABLE.find(s => s.seq === newSeq);
+    const newName = newInfo?.name ?? "Sconosciuto";
+    const oldName = SEQUENCE_TABLE.find(s => s.seq === currentSeq)?.name ?? "";
+
+    const confirmed = await Dialog.confirm({
+      title:   "⬡ Avanzamento di Sequenza",
+      content: `
+        <div style="font-family:'Palatino Linotype',serif;padding:8px">
+          <p>${this.name} sta per avanzare nel proprio percorso Beyonder.</p>
+          <table style="width:100%;margin:8px 0;border-collapse:collapse">
+            <tr>
+              <td style="padding:4px;opacity:0.7">Da</td>
+              <td style="padding:4px"><strong>Sequenza ${currentSeq} — ${oldName}</strong></td>
+            </tr>
+            <tr>
+              <td style="padding:4px;opacity:0.7">A</td>
+              <td style="padding:4px;color:#c9a227"><strong>Sequenza ${newSeq} — ${newName}</strong></td>
+            </tr>
+          </table>
+          <p style="color:#c0392b;font-size:0.85em">
+            ⚠ Assicurati che il rituale sia stato completato correttamente e che la pozione sia stata digerita.
+          </p>
+        </div>
+      `,
+      yes: "✦ Avanza",
+      no:  "Annulla",
+    });
+
+    if (!confirmed) return;
+
+    // Aggiorna dati
+    await this.update({
+      "system.sequenceNumber": newSeq,
+      "system.sequenceName":   newName,
+    });
+
+    // Chat card di avanzamento
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: `
+        <div class="lotm-roll-card" style="--attr-color:#7b5ea7">
+          <div class="lrc-header">
+            <span class="lrc-actor">${this.name}</span>
+            <span class="lrc-attr" style="color:#a688d4">Avanzamento di Sequenza</span>
+          </div>
+          <div class="lrc-formula" style="opacity:0.7">
+            Seq. ${currentSeq} (${oldName}) → Seq. ${newSeq}
+          </div>
+          <div class="lrc-total" style="font-size:1.5em;color:#c9a227">${newName}</div>
+          <div class="ld-result ld-success" style="margin-top:6px">
+            ✦ Il rituale è completato. Il potere Beyonder si consolida.
+          </div>
+        </div>
+      `,
+    });
+
+    ui.notifications.info(`${this.name} ha avanzato a Sequenza ${newSeq} — ${newName}!`);
   }
 }

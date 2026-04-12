@@ -42,9 +42,24 @@
       "path": "packs/lotm-abilities",
       "type": "Item",
       "system": "lotm"
+    },
+    {
+      "name": "lotm-macros",
+      "label": "Macro LotM",
+      "path": "packs/lotm-macros",
+      "type": "Macro",
+      "system": "lotm"
+    },
+    {
+      "name": "lotm-tables",
+      "label": "Tabelle Casuali LotM",
+      "path": "packs/lotm-tables",
+      "type": "RollTable",
+      "system": "lotm"
     }
   ],
   "socket": false,
+  "version": "1.1.0",
   "documentTypes": {
     "Actor": {
       "character": {},
