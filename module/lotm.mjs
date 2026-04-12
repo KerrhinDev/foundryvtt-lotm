@@ -92,59 +92,59 @@ Hooks.once("init", () => {
   };
 
   // ── Effetti di stato LotM ─────────────────────────────────────
+  // IMPORTANTE: prefisso "lotm-" obbligatorio — evita collisioni con gli id
+  // built-in di Foundry V14 ("curse", "poison", ecc.) che causano il crash
+  // "ownKeys on proxy: trap returned duplicate entries".
   const LOTM_STATUS_EFFECTS = [
     {
-      id:   "contamination-1",
+      id:   "lotm-contamination-1",
       name: "Contaminazione Lieve",
       img:  "systems/lotm/assets/icons/contamination.svg",
       changes: [{ key: "system.willpower.bonus", mode: 2, value: -1 }],
     },
     {
-      id:   "contamination-2",
+      id:   "lotm-contamination-2",
       name: "Contaminazione Moderata",
       img:  "systems/lotm/assets/icons/contamination.svg",
       changes: [{ key: "system.willpower.bonus", mode: 2, value: -2 }],
     },
     {
-      id:   "contamination-3",
+      id:   "lotm-contamination-3",
       name: "Contaminazione Grave",
       img:  "systems/lotm/assets/icons/contamination.svg",
       changes: [{ key: "system.willpower.bonus", mode: 2, value: -3 }],
     },
     {
-      id:   "madness-1",
+      id:   "lotm-madness-1",
       name: "Follia Lieve",
       img:  "systems/lotm/assets/icons/madness.svg",
     },
     {
-      id:   "madness-2",
+      id:   "lotm-madness-2",
       name: "Follia Profonda",
       img:  "systems/lotm/assets/icons/madness.svg",
     },
     {
-      id:   "potion-poison",
+      id:   "lotm-poison",
       name: "Avvelenamento da Pozione",
       img:  "systems/lotm/assets/icons/poison.svg",
     },
     {
-      id:   "curse",
+      id:   "lotm-curse",
       name: "Maledizione",
       img:  "systems/lotm/assets/icons/curse.svg",
     },
     {
-      id:   "blessed",
+      id:   "lotm-blessed",
       name: "Benedizione Beyonder",
       img:  "systems/lotm/assets/icons/blessed.svg",
     },
   ];
 
-  // Aggiunge gli effetti LotM — push() è sicuro sul Proxy V14 (non reindicizza gli elementi esistenti)
-  // Filtra prima eventuali duplicati (sicurezza anti-reload)
-  const _lotmIds = new Set(LOTM_STATUS_EFFECTS.map(e => e.id));
-  for (let i = CONFIG.statusEffects.length - 1; i >= 0; i--) {
-    if (_lotmIds.has(CONFIG.statusEffects[i]?.id)) CONFIG.statusEffects.splice(i, 1);
+  // Aggiunge solo se non già presenti (guard anti-hot-reload, nessun splice sul Proxy)
+  if (!CONFIG.statusEffects.some(e => e?.id?.startsWith("lotm-"))) {
+    for (const effect of LOTM_STATUS_EFFECTS) CONFIG.statusEffects.push(effect);
   }
-  CONFIG.statusEffects.push(...LOTM_STATUS_EFFECTS);
 
   // ── Handlebars helpers ────────────────────────────────────────
   Handlebars.registerHelper("add", (a, b) => (Number(a) || 0) + (Number(b) || 0));
