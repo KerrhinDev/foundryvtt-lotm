@@ -128,11 +128,12 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   console.log("LotM | Pronto!");
 
-  // Registra macro globali nel chat (comando /tarot)
+  // Comando /tarot via chat
   Hooks.on("chatMessage", (chatLog, message, data) => {
-    if (message.trim().toLowerCase() === "/tarot") {
+    const text = typeof message === "string" ? message : (data?.content ?? "");
+    if (text.trim().toLowerCase() === "/tarot") {
       LotMTarotApp.open();
-      return false; // impedisce l'invio del messaggio chat
+      return false;
     }
   });
 });
@@ -141,7 +142,9 @@ Hooks.once("ready", () => {
    CHAT MESSAGE (stile messaggi LotM)
 ══════════════════════════════════════════════════════════════════ */
 Hooks.on("renderChatMessage", (message, html) => {
-  if (message.rolls?.length) {
-    html.addClass("lotm-roll-message");
-  }
+  if (!message.rolls?.length) return;
+  // Supporta sia jQuery che HTMLElement (V14)
+  if (typeof html?.addClass === "function") html.addClass("lotm-roll-message");
+  else if (html instanceof HTMLElement) html.classList.add("lotm-roll-message");
+  else if (html?.[0] instanceof HTMLElement) html[0].classList.add("lotm-roll-message");
 });

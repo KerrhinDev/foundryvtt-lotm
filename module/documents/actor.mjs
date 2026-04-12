@@ -99,24 +99,29 @@ export class LotMActor extends Actor {
     });
 
     // Chat card di avanzamento
-    await ChatMessage.create({
-      speaker: ChatMessage.getSpeaker({ actor: this }),
-      content: `
-        <div class="lotm-roll-card" style="--attr-color:#7b5ea7">
-          <div class="lrc-header">
-            <span class="lrc-actor">${this.name}</span>
-            <span class="lrc-attr" style="color:#a688d4">Avanzamento di Sequenza</span>
+    try {
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        content: `
+          <div class="lotm-roll-card" style="--attr-color:#7b5ea7">
+            <div class="lrc-header">
+              <span class="lrc-actor">${this.name}</span>
+              <span class="lrc-attr" style="color:#a688d4">Avanzamento di Sequenza</span>
+            </div>
+            <div class="lrc-formula" style="opacity:0.7">
+              ${currentSeq === 10 ? "Senza Sequenza" : `Seq. ${currentSeq} (${oldName})`} → Seq. ${newSeq}
+            </div>
+            <div class="lrc-total" style="font-size:1.5em;color:#c9a227">${newName}</div>
+            <div class="ld-result ld-success" style="margin-top:6px">
+              ✦ Il rituale è completato. Il potere Beyonder si consolida.
+            </div>
           </div>
-          <div class="lrc-formula" style="opacity:0.7">
-            Seq. ${currentSeq} (${oldName}) → Seq. ${newSeq}
-          </div>
-          <div class="lrc-total" style="font-size:1.5em;color:#c9a227">${newName}</div>
-          <div class="ld-result ld-success" style="margin-top:6px">
-            ✦ Il rituale è completato. Il potere Beyonder si consolida.
-          </div>
-        </div>
-      `,
-    });
+        `,
+      });
+    } catch(err) {
+      console.error("LotM | advanceSequence ChatMessage errore:", err);
+      ui.notifications.error(`LotM — Errore chat: ${err.message}`);
+    }
 
     ui.notifications.info(`${this.name} ha avanzato a Sequenza ${newSeq} — ${newName}!`);
   }
