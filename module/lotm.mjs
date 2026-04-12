@@ -91,60 +91,6 @@ Hooks.once("init", () => {
     },
   };
 
-  // ── Effetti di stato LotM ─────────────────────────────────────
-  // IMPORTANTE: prefisso "lotm-" obbligatorio — evita collisioni con gli id
-  // built-in di Foundry V14 ("curse", "poison", ecc.) che causano il crash
-  // "ownKeys on proxy: trap returned duplicate entries".
-  const LOTM_STATUS_EFFECTS = [
-    {
-      id:   "lotm-contamination-1",
-      name: "Contaminazione Lieve",
-      img:  "systems/lotm/assets/icons/contamination.svg",
-      changes: [{ key: "system.willpower.bonus", mode: 2, value: -1 }],
-    },
-    {
-      id:   "lotm-contamination-2",
-      name: "Contaminazione Moderata",
-      img:  "systems/lotm/assets/icons/contamination.svg",
-      changes: [{ key: "system.willpower.bonus", mode: 2, value: -2 }],
-    },
-    {
-      id:   "lotm-contamination-3",
-      name: "Contaminazione Grave",
-      img:  "systems/lotm/assets/icons/contamination.svg",
-      changes: [{ key: "system.willpower.bonus", mode: 2, value: -3 }],
-    },
-    {
-      id:   "lotm-madness-1",
-      name: "Follia Lieve",
-      img:  "systems/lotm/assets/icons/madness.svg",
-    },
-    {
-      id:   "lotm-madness-2",
-      name: "Follia Profonda",
-      img:  "systems/lotm/assets/icons/madness.svg",
-    },
-    {
-      id:   "lotm-poison",
-      name: "Avvelenamento da Pozione",
-      img:  "systems/lotm/assets/icons/poison.svg",
-    },
-    {
-      id:   "lotm-curse",
-      name: "Maledizione",
-      img:  "systems/lotm/assets/icons/curse.svg",
-    },
-    {
-      id:   "lotm-blessed",
-      name: "Benedizione Beyonder",
-      img:  "systems/lotm/assets/icons/blessed.svg",
-    },
-  ];
-
-  // Aggiunge solo se non già presenti (guard anti-hot-reload, nessun splice sul Proxy)
-  if (!CONFIG.statusEffects.some(e => e?.id?.startsWith("lotm-"))) {
-    for (const effect of LOTM_STATUS_EFFECTS) CONFIG.statusEffects.push(effect);
-  }
 
   // ── Handlebars helpers ────────────────────────────────────────
   Handlebars.registerHelper("add", (a, b) => (Number(a) || 0) + (Number(b) || 0));
