@@ -138,10 +138,13 @@ Hooks.once("init", () => {
     },
   ];
 
-  // Aggiunge gli effetti LotM in testa (unshift per non riassegnare il Proxy V14)
-  for (let i = LOTM_STATUS_EFFECTS.length - 1; i >= 0; i--) {
-    CONFIG.statusEffects.unshift(LOTM_STATUS_EFFECTS[i]);
+  // Aggiunge gli effetti LotM — push() è sicuro sul Proxy V14 (non reindicizza gli elementi esistenti)
+  // Filtra prima eventuali duplicati (sicurezza anti-reload)
+  const _lotmIds = new Set(LOTM_STATUS_EFFECTS.map(e => e.id));
+  for (let i = CONFIG.statusEffects.length - 1; i >= 0; i--) {
+    if (_lotmIds.has(CONFIG.statusEffects[i]?.id)) CONFIG.statusEffects.splice(i, 1);
   }
+  CONFIG.statusEffects.push(...LOTM_STATUS_EFFECTS);
 
   // ── Handlebars helpers ────────────────────────────────────────
   Handlebars.registerHelper("add", (a, b) => (Number(a) || 0) + (Number(b) || 0));
