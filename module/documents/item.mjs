@@ -20,8 +20,12 @@ export class LotMItem extends Item {
 
   /**
    * Usa l'abilità: invia una chat card stilizzata con tutti i dettagli.
+   * Solo per item di tipo "ability" — l'equipaggiamento usa rollDice direttamente.
    */
   async use() {
+    if (this.type !== "ability") {
+      return ui.notifications.warn(`${this.name}: usa l'abilità solo su oggetti di tipo Abilità.`);
+    }
     const sys   = this.system;
     const type  = sys.abilityType ?? "active";
     const color = ABILITY_TYPE_COLORS[type] ?? "#c9a227";

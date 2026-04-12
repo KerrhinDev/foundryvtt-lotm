@@ -2,7 +2,6 @@
   "id": "lotm",
   "title": "Lord of the Mysteries",
   "description": "Sistema GdR basato su Lord of the Mysteries (Il Signore dei Misteri). Include scheda personaggio completa con attributi, sequenze, abilità e sistema di dadi.",
-  "version": "1.0.0",
   "compatibility": {
     "minimum": "12",
     "verified": "14"
