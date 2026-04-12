@@ -92,26 +92,34 @@ export class LotMActor extends Actor {
     const newName = newInfo?.name ?? "Sconosciuto";
     const oldName = SEQUENCE_TABLE.find(s => s.seq === currentSeq)?.name ?? "";
 
-    const confirmed = await Dialog.confirm({
-      title:   "⬡ Avanzamento di Sequenza",
-      content: `
-        <div style="font-family:'Palatino Linotype',serif;padding:8px">
-          <p>${this.name} sta per avanzare nel proprio percorso Beyonder.</p>
-          <table style="width:100%;margin:8px 0;border-collapse:collapse">
-            <tr>
-              <td style="padding:4px;opacity:0.7">Da</td>
-              <td style="padding:4px"><strong>Sequenza ${currentSeq} — ${oldName}</strong></td>
-            </tr>
-            <tr>
-              <td style="padding:4px;opacity:0.7">A</td>
-              <td style="padding:4px;color:#c9a227"><strong>Sequenza ${newSeq} — ${newName}</strong></td>
-            </tr>
-          </table>
-          <p style="color:#c0392b;font-size:0.85em">
-            ⚠ Assicurati che il rituale sia stato completato correttamente e che la pozione sia stata digerita.
-          </p>
-        </div>
-      `,
+    const confirmed = await new Promise(resolve => {
+      new Dialog({
+        title: "⬡ Avanzamento di Sequenza",
+        content: `
+          <div style="font-family:'Palatino Linotype',serif;padding:8px">
+            <p>${this.name} sta per avanzare nel proprio percorso Beyonder.</p>
+            <table style="width:100%;margin:8px 0;border-collapse:collapse">
+              <tr>
+                <td style="padding:4px;opacity:0.7">Da</td>
+                <td style="padding:4px"><strong>${currentSeq === 10 ? "Senza Sequenza" : `Sequenza ${currentSeq} — ${oldName}`}</strong></td>
+              </tr>
+              <tr>
+                <td style="padding:4px;opacity:0.7">A</td>
+                <td style="padding:4px;color:#c9a227"><strong>Sequenza ${newSeq} — ${newName}</strong></td>
+              </tr>
+            </table>
+            <p style="color:#c0392b;font-size:0.85em">
+              ⚠ Assicurati che il rituale sia stato completato correttamente e che la pozione sia stata digerita.
+            </p>
+          </div>
+        `,
+        buttons: {
+          yes: { icon: '<i class="fas fa-check"></i>', label: "Avanza", callback: () => resolve(true) },
+          no:  { icon: '<i class="fas fa-times"></i>', label: "Annulla", callback: () => resolve(false) },
+        },
+        default: "no",
+        close: () => resolve(false),
+      }).render(true);
     });
 
     if (!confirmed) return;

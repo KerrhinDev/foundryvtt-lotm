@@ -388,7 +388,7 @@ async function populateCompendium() {
           name: fullName,
           type: "ability",
           system: {
-            abilityType: seq.seq >= 7 ? "passive" : "active",
+            abilityType: seq.seq <= 6 ? "ritual" : seq.seq === 7 ? "passive" : "active",
             sequence:    seq.seq,
             pathway:     pathway.pathway,
             cost:        "",
