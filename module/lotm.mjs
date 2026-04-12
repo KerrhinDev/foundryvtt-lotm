@@ -138,11 +138,10 @@ Hooks.once("init", () => {
     },
   ];
 
-  // Aggiunge gli effetti LotM in testa a quelli di default
-  CONFIG.statusEffects = [
-    ...LOTM_STATUS_EFFECTS,
-    ...CONFIG.statusEffects,
-  ];
+  // Aggiunge gli effetti LotM in testa (unshift per non riassegnare il Proxy V14)
+  for (let i = LOTM_STATUS_EFFECTS.length - 1; i >= 0; i--) {
+    CONFIG.statusEffects.unshift(LOTM_STATUS_EFFECTS[i]);
+  }
 
   // ── Handlebars helpers ────────────────────────────────────────
   Handlebars.registerHelper("add", (a, b) => (Number(a) || 0) + (Number(b) || 0));
