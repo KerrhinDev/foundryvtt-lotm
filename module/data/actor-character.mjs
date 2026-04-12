@@ -71,8 +71,8 @@ export class LotMCharacterData extends foundry.abstract.TypeDataModel {
       pathway:        new fields.StringField({ initial: "" }),
       race:           new fields.StringField({ initial: "" }),
       gender:         new fields.StringField({ initial: "" }),
-      sequenceNumber: new fields.NumberField({ required: true, nullable: false, initial: 9, min: 0, max: 9, integer: true }),
-      sequenceName:   new fields.StringField({ initial: "Ordinary Person" }),
+      sequenceNumber: new fields.NumberField({ required: true, nullable: false, initial: 10, min: 0, max: 10, integer: true }),
+      sequenceName:   new fields.StringField({ initial: "Senza Sequenza" }),
 
       // ── Attributi ──────────────────────────────────────────────────
       // Ogni attributo: found (Foundation), bey (Beyond), corr (Correction), bonus, fin (calcolato)
@@ -211,6 +211,7 @@ export class LotMCharacterData extends foundry.abstract.TypeDataModel {
 
   /** Info sequenza corrente */
   get currentSequenceInfo() {
+    if (this.sequenceNumber === 10) return { seq: 10, name: "Senza Sequenza", dig: "-", chrBonus: "-", strReq: "-", val: "-" };
     return SEQUENCE_TABLE.find(s => s.seq === this.sequenceNumber) ?? SEQUENCE_TABLE[0];
   }
 

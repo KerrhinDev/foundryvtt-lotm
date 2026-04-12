@@ -6,7 +6,7 @@
 
 *"La nebbia non mente mai, ma non dice mai tutta la verità."*
 
-[![Versione](https://img.shields.io/badge/versione-1.1.4-c9a227?style=for-the-badge&logo=github)](https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest)
+[![Versione](https://img.shields.io/badge/versione-1.1.5-c9a227?style=for-the-badge&logo=github)](https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest)
 [![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-V12–V14-7b5ea7?style=for-the-badge)](https://foundryvtt.com)
 [![Lingua](https://img.shields.io/badge/lingua-IT%20%7C%20EN-0b0c14?style=for-the-badge)](#)
 [![Licenza](https://img.shields.io/badge/licenza-MIT-green?style=for-the-badge)](LICENSE)
@@ -168,6 +168,9 @@ PR e issue benvenute! Se conosci bene i percorsi Beyonder e vuoi aiutare ad espa
 ---
 
 ## 📝 Changelog
+
+### v1.1.5
+- ✨ Aggiunta opzione "Senza Sequenza" nel dropdown sequenze (non appare nella tabella di riferimento)
 
 ### v1.1.4
 - ⚔️ Iniziativa: formula `1d20 + Agilità` tramite `getRollData()`

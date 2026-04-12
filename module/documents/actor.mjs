@@ -86,7 +86,8 @@ export class LotMActor extends Actor {
       return void ui.notifications.warn("Il personaggio ha già raggiunto la Sequenza 0 — il culmine del percorso.");
     }
 
-    const newSeq  = currentSeq - 1;
+    // "Senza Sequenza" (10) → prima sequenza Beyonder (9)
+    const newSeq = currentSeq === 10 ? 9 : currentSeq - 1;
     const newInfo = SEQUENCE_TABLE.find(s => s.seq === newSeq);
     const newName = newInfo?.name ?? "Sconosciuto";
     const oldName = SEQUENCE_TABLE.find(s => s.seq === currentSeq)?.name ?? "";

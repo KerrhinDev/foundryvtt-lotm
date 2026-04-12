@@ -54,12 +54,15 @@ export class LotMCharacterSheet extends ActorSheet {
         mythicForm: sys.defenseExtras?.mythicForm ?? "",
       };
 
-      // Sequenze disponibili per select
-      context.sequenceOptions = SEQUENCE_TABLE.map(s => ({
-        value: s.seq,
-        label: `Seq. ${s.seq} — ${s.name}`,
-        selected: s.seq === sys.sequenceNumber,
-      }));
+      // Sequenze disponibili per select (include "Senza Sequenza" in cima)
+      context.sequenceOptions = [
+        { value: 10, label: "Senza Sequenza", selected: sys.sequenceNumber === 10 },
+        ...SEQUENCE_TABLE.map(s => ({
+          value: s.seq,
+          label: `Seq. ${s.seq} — ${s.name}`,
+          selected: s.seq === sys.sequenceNumber,
+        })),
+      ];
 
       // Info sequenza corrente
       context.seqInfo = sys.currentSequenceInfo;
@@ -132,9 +135,11 @@ export class LotMCharacterSheet extends ActorSheet {
     // Sequence select → aggiorna nome
     html.find('select[name="system.sequenceNumber"]').on("change", ev => {
       const num = parseInt(ev.target.value);
-      const info = SEQUENCE_TABLE.find(s => s.seq === num);
-      if (info) {
-        this.actor.update({ "system.sequenceName": info.name });
+      if (num === 10) {
+        this.actor.update({ "system.sequenceName": "Senza Sequenza" });
+      } else {
+        const info = SEQUENCE_TABLE.find(s => s.seq === num);
+        if (info) this.actor.update({ "system.sequenceName": info.name });
       }
     });
   }
