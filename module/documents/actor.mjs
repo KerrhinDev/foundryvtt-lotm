@@ -12,6 +12,31 @@ export class LotMActor extends Actor {
   prepareDerivedData() {}
 
   /**
+   * Espone i valori calcolati alle formule Roll (es. iniziativa).
+   * @override
+   */
+  getRollData() {
+    const data = super.getRollData();
+    const sys  = this.system;
+    // PG — usa il valore finale calcolato dal getter
+    if (this.type === "character") {
+      data.aglFin  = sys.aglFin  ?? 0;
+      data.strFin  = sys.strFin  ?? 0;
+      data.willFin = sys.willFin ?? 0;
+      data.phyFin  = sys.phyFin  ?? 0;
+      data.chaFin  = sys.chaFin  ?? 0;
+      data.insFin  = sys.insFin  ?? 0;
+      data.luckFin = sys.luckFin ?? 0;
+      data.eduFin  = sys.eduFin  ?? 0;
+    }
+    // PNG — agility è già un valore finale diretto
+    if (this.type === "npc") {
+      data.aglFin = sys.agility ?? 0;
+    }
+    return data;
+  }
+
+  /**
    * Attributi tracciabili per le barre token.
    * @override
    */

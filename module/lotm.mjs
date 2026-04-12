@@ -79,6 +79,12 @@ Hooks.once("init", () => {
     });
   }
 
+  // ── Iniziativa: 1d20 + Agilità ───────────────────────────────
+  CONFIG.Combat.initiative = {
+    formula: "1d20 + @aglFin",
+    decimals: 0,
+  };
+
   // ── Token: barre tracciabili ──────────────────────────────────
   CONFIG.Actor.trackableAttributes = {
     character: {
