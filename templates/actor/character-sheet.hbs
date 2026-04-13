@@ -113,7 +113,7 @@
       <div class="attrs-cards-grid">
         {{#each attrs as |attr key|}}
         <div class="attr-card attr-roll" data-attr="{{attr.key}}"
-             title="Tira 2d6 + {{attr.fin}} — {{attr.label}}">
+             title="Tira 1d20 + {{attr.fin}} — {{attr.label}}">
           <div class="attr-abbr">{{attr.abbr}}</div>
           <div class="attr-fin-val">{{attr.fin}}</div>
           <div class="attr-full-name">{{attr.label}}</div>
@@ -157,6 +157,9 @@
             <label>Cura</label>
             <input type="number" name="system.life.heal" value="{{system.life.heal}}">
           </div>
+          <div class="res-formula-hint" title="HP base (10+FIS) + HP da avanzamenti. Avanzando Seq si aggiunge automaticamente il FIS attuale.">
+            Formula: {{system.totalMaxHp}} (base {{system.baseHp}} + seq {{system.hpFromSequences}})
+          </div>
         </div>
 
         {{!-- SPIRITO --}}
@@ -176,11 +179,20 @@
             <label>Cura</label>
             <input type="number" name="system.spiritual.heal" value="{{system.spiritual.heal}}">
           </div>
+          <div class="res-formula-hint" title="Limite SP calcolato: (Will₀ + Ins₀) + (livello_seq × InsFin). Imposta i valori iniziali qui sotto.">
+            Limite SP: {{system.spLimit}}
+          </div>
+          <div class="res-sub-row res-initials">
+            <label title="Will iniziale (a creazione personaggio)">Will₀</label>
+            <input type="number" name="system.spInitialWill" value="{{system.spInitialWill}}" style="width:44px">
+            <label title="Ispirazione iniziale (a creazione personaggio)">Ins₀</label>
+            <input type="number" name="system.spInitialIns" value="{{system.spInitialIns}}" style="width:44px">
+          </div>
         </div>
 
         {{!-- RAZIONALITÀ --}}
         <div class="resource-block res-razionalita" style="--res-color:#50a0c0;--res-color-light:#70c0e0;">
-          <div class="res-title">⬥ Razionalità</div>
+          <div class="res-title">⬥ Razionalità / Sanità</div>
           <div class="res-bar-row">
             <input type="number" name="system.rationality.value" value="{{system.rationality.value}}" class="res-cur">
             <span class="res-sep">/</span>
@@ -194,6 +206,9 @@
             <input type="number" name="system.rationality.loss" value="{{system.rationality.loss}}">
             <label>Cura</label>
             <input type="number" name="system.rationality.heal" value="{{system.rationality.heal}}">
+          </div>
+          <div class="res-formula-hint" title="Limite Sanità = Volontà + 10. Non puoi recuperare oltre questo valore.">
+            Limite SAN: {{system.sanityLimit}} (VOL + 10)
           </div>
         </div>
 
@@ -261,7 +276,7 @@
           <tr>
             <th>Difesa Fisica</th>
             <td class="def-value">{{defense.physical}}</td>
-            <td class="def-hint">10 + FIS + bonus</td>
+            <td class="def-hint">10 + AGL + Armatura + Schivata + bonus</td>
           </tr>
           <tr>
             <th>Difesa Volontà</th>
@@ -269,7 +284,7 @@
             <td class="def-hint">10 + VOL + bonus</td>
           </tr>
           <tr>
-            <th>Resistenza</th>
+            <th>Difesa Fisica (Resistenza)</th>
             <td class="def-value">{{defense.resistance}}</td>
             <td class="def-hint">10 + FIS</td>
           </tr>
@@ -292,6 +307,17 @@
             </td>
           </tr>
           <tr>
+            <th>Schivata</th>
+            <td class="def-value">{{system.dodgeBonus}}</td>
+            <td>
+              <select name="system.dodgeLevel" style="font-size:0.85em">
+                {{#each skillLevelOptions as |opt|}}
+                  <option value="{{opt.value}}" {{#if opt.selected}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+            </td>
+          </tr>
+          <tr>
             <th>Bonus Danno</th>
             <td class="def-value dmg-bonus">
               <span class="roll-dice clickable"
@@ -302,6 +328,11 @@
               </span>
             </td>
             <td class="def-hint">da tabella FOR</td>
+          </tr>
+          <tr>
+            <th>Movimento</th>
+            <td class="def-value">{{system.movement}} m</td>
+            <td class="def-hint">FOR + AGL</td>
           </tr>
           <tr>
             <th>Forma Mitica</th>
@@ -325,14 +356,10 @@
             <td><input type="number" name="system.defenseExtras.willBonus" value="{{system.defenseExtras.willBonus}}"></td>
           </tr>
           <tr>
-            <th>Bonus Cura (Vita)</th>
-            <td><input type="number" name="system.defenseExtras.healingBonus" value="{{system.defenseExtras.healingBonus}}"></td>
             <th>Bonus Pen. Danni</th>
             <td><input type="number" name="system.defenseExtras.dPenBonus" value="{{system.defenseExtras.dPenBonus}}"></td>
-          </tr>
-          <tr>
             <th>Bonus Ign. Eva.</th>
-            <td colspan="3"><input type="number" name="system.defenseExtras.ignEvaBonus" value="{{system.defenseExtras.ignEvaBonus}}"></td>
+            <td><input type="number" name="system.defenseExtras.ignEvaBonus" value="{{system.defenseExtras.ignEvaBonus}}"></td>
           </tr>
         </tbody>
       </table>
@@ -387,39 +414,71 @@
         <button type="button" class="skill-add btn-small">✦ Aggiungi Abilità</button>
       </div>
 
+      {{!-- Legenda livelli --}}
+      <div class="skill-levels-legend">
+        <span class="sll-item" title="Non addestrato: -4">Non add. <b>−4</b></span>
+        <span class="sll-sep">·</span>
+        <span class="sll-item" title="Addestrato: +2">Add. <b>+2</b></span>
+        <span class="sll-sep">·</span>
+        <span class="sll-item" title="Competente: +4">Comp. <b>+4</b></span>
+        <span class="sll-sep">·</span>
+        <span class="sll-item" title="Avanzato: +5">Avanz. <b>+5</b></span>
+        <span class="sll-sep">·</span>
+        <span class="sll-item" title="Maestria: +6">Maest. <b>+6</b></span>
+        <span class="sll-sep">·</span>
+        <span class="sll-item" title="Sapere (Lore): +7">Sapere <b>+7</b></span>
+        <span class="sll-sep">·</span>
+        <span class="sll-item" title="Grandmaster: +8">Grand. <b>+8</b></span>
+      </div>
+
       <table class="skills-table">
         <thead>
           <tr>
-            <th class="skill-name-col">Nome Abilità</th>
-            <th title="Educazione">Edu.</th>
-            <th title="Ispirazione">Ins.</th>
-            <th title="Extra">Ext.</th>
-            <th title="Pratica">Prat.</th>
-            <th title="Numero">Num.</th>
-            <th title="Correzione">Corr.</th>
-            <th class="skill-total-col" title="Totale">Tot.</th>
+            <th class="skill-name-col">Nome</th>
+            <th class="skill-level-col">Livello</th>
+            <th class="skill-attr-col">Attr.</th>
+            <th class="skill-bonus-col" title="Bonus aggiuntivo">+Bon</th>
+            <th class="skill-total-col" title="1d20 + livello + attributo + bonus">Totale</th>
+            <th class="skill-roll-col"></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {{#each system.skills as |skill idx|}}
+          {{#each skills as |skill idx|}}
           <tr data-index="{{idx}}">
             <td class="skill-name-col">
-              <input type="text" name="system.skills.{{idx}}.name" value="{{skill.name}}" placeholder="Nome abilità">
+              <input type="text" name="system.skills.{{idx}}.name"
+                     value="{{skill.name}}" placeholder="Nome abilità">
             </td>
-            <td><input type="number" name="system.skills.{{idx}}.edu"  value="{{skill.edu}}"></td>
-            <td><input type="number" name="system.skills.{{idx}}.ins"  value="{{skill.ins}}"></td>
-            <td><input type="number" name="system.skills.{{idx}}.ext"  value="{{skill.ext}}"></td>
-            <td><input type="number" name="system.skills.{{idx}}.prac" value="{{skill.prac}}"></td>
-            <td><input type="number" name="system.skills.{{idx}}.numb" value="{{skill.numb}}"></td>
-            <td><input type="number" name="system.skills.{{idx}}.corr" value="{{skill.corr}}"></td>
-            <td class="skill-total">{{add (add (add skill.edu skill.ins) (add skill.ext skill.prac)) (add skill.numb skill.corr)}}</td>
+            <td class="skill-level-col">
+              <select name="system.skills.{{idx}}.level" class="skill-level-select skill-level-{{skill.level}}">
+                {{#each ../skillLevelOptions as |opt|}}
+                  <option value="{{opt.value}}" {{#if (eq opt.value ../skill.level)}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+            </td>
+            <td class="skill-attr-col">
+              <select name="system.skills.{{idx}}.attribute">
+                {{#each ../attrOptions as |opt|}}
+                  <option value="{{opt.value}}" {{#if (eq opt.value ../skill.attribute)}}selected{{/if}}>{{opt.label}}</option>
+                {{/each}}
+              </select>
+            </td>
+            <td class="skill-bonus-col">
+              <input type="number" name="system.skills.{{idx}}.bonus" value="{{skill.bonus}}" style="width:44px">
+            </td>
+            <td class="skill-total">{{skill.total}}</td>
+            <td class="skill-roll-col">
+              <button type="button" class="skill-roll btn-icon"
+                      data-index="{{idx}}"
+                      title="Tira 1d20 + {{skill.name}}">🎲</button>
+            </td>
             <td><button type="button" class="skill-delete btn-icon" title="Rimuovi">✕</button></td>
           </tr>
           {{/each}}
           {{#unless system.skills.length}}
           <tr>
-            <td colspan="9" class="empty-row">
+            <td colspan="7" class="empty-row">
               Nessuna abilità. Clicca "✦ Aggiungi Abilità" per iniziare.
             </td>
           </tr>

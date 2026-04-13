@@ -52,7 +52,7 @@ export class LotMNPCSheet extends ActorSheet {
       const attrKey = ev.currentTarget.dataset.attr;
       const val     = this.actor.system[attrKey] ?? 0;
       const label   = ev.currentTarget.dataset.label ?? attrKey;
-      this.actor.rollDice(`2d6+${val}`, label);
+      this.actor.rollDice(`1d20+${val}`, label);
     });
 
     // Item create

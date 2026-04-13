@@ -6,7 +6,7 @@
 
 *"La nebbia non mente mai, ma non dice mai tutta la verità."*
 
-[![Versione](https://img.shields.io/badge/versione-1.1.10-c9a227?style=for-the-badge&logo=github)](https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest)
+[![Versione](https://img.shields.io/badge/versione-1.2.0-c9a227?style=for-the-badge&logo=github)](https://github.com/KerrhinDev/foundryvtt-lotm/releases/latest)
 [![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-V12–V14-7b5ea7?style=for-the-badge)](https://foundryvtt.com)
 [![Lingua](https://img.shields.io/badge/lingua-IT%20%7C%20EN-0b0c14?style=for-the-badge)](#)
 [![Licenza](https://img.shields.io/badge/licenza-MIT-green?style=for-the-badge)](LICENSE)
@@ -168,6 +168,17 @@ PR e issue benvenute! Se conosci bene i percorsi Beyonder e vuoi aiutare ad espa
 ---
 
 ## 📝 Changelog
+
+### v1.2.0
+- ⚖️ **Allineamento regole completo** — tutte le meccaniche ora corrispondono ai documenti ufficiali
+- 🎲 Dado base: **1d20** (era 2d6) per tutti i tiri attributo, skill e NPC
+- 🛡️ **Difesa Fisica** corretta: `10 + Agilità + Armatura + Abilità Schivata` (era errata con Fisico)
+- 🛡️ Aggiunto campo **Schivata** con livello discreto (Auto-trained) — influisce sulla Difesa Fisica
+- 🏃 **Movimento** calcolato automaticamente: `Forza + Agilità` metri
+- ❤️ **HP** calcolati: `10 + Fisico` base + Fisico per ogni avanzamento di Sequenza (auto-incremento)
+- 🧠 **Limite Sanità** mostrato come hint: `Volontà + 10`
+- 💠 **Limite Spiritualità** calcolato: `(VOL₀ + ISP₀) + (livello_seq × InsFin)` con campi valori iniziali
+- 📚 **Sistema Skill** completamente ridisegnato — livelli discreti (Non addestrato → Grandmaster) con bonus fissi (-4/+2/+4/+5/+6/+7/+8), attributo collegato e bonus extra; tiro 1d20 per skill
 
 ### v1.1.10
 - 🔧 Fix critico: `getRollData()` non muta più il DataModel V14 — oggetto plain per le formule Roll

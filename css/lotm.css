@@ -772,6 +772,23 @@
 .resource-block.res-razionalita { --res-color: #50a0c0; --res-color-light: #70c0e0; }
 .resource-block.res-fortuna { --res-color: #c9a227; --res-color-light: #f0c84a; }
 
+/* Formula hint sotto le risorse */
+.lotm-sheet .res-formula-hint {
+  font-size: 9px;
+  color: var(--lotm-text-muted);
+  text-align: center;
+  margin-top: 3px;
+  font-style: italic;
+  opacity: 0.75;
+}
+
+/* Valori iniziali SP */
+.lotm-sheet .res-initials {
+  margin-top: 2px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 3px;
+}
+
 /* ══════════════════════════════════════════════════════════════════
    SEQUENCE TABLE
 ══════════════════════════════════════════════════════════════════ */
@@ -964,6 +981,47 @@
 .lotm-sheet .skills-table tr:hover td {
   background: rgba(201,162,39,0.04);
 }
+
+/* Skills table — colonne nuove sistema */
+.lotm-sheet .skills-table .skill-level-col  { width: 155px; }
+.lotm-sheet .skills-table .skill-attr-col   { width: 56px; }
+.lotm-sheet .skills-table .skill-bonus-col  { width: 48px; }
+.lotm-sheet .skills-table .skill-roll-col   { width: 28px; text-align: center; }
+
+.lotm-sheet .skills-table select {
+  background: var(--lotm-bg-input);
+  border: 1px solid var(--lotm-border-dim);
+  color: var(--lotm-text);
+  font-size: 10px;
+  padding: 1px 3px;
+  border-radius: 3px;
+  width: 100%;
+}
+
+/* Colori per livello skill */
+.lotm-sheet .skill-level-select.skill-level-untrained   { color: #888; }
+.lotm-sheet .skill-level-select.skill-level-trained     { color: #8bc4e8; }
+.lotm-sheet .skill-level-select.skill-level-proficiency { color: #7ec87e; }
+.lotm-sheet .skill-level-select.skill-level-advanced    { color: #c9a227; }
+.lotm-sheet .skill-level-select.skill-level-mastery     { color: #e8944a; }
+.lotm-sheet .skill-level-select.skill-level-lore        { color: #d06ab8; }
+.lotm-sheet .skill-level-select.skill-level-grandmaster { color: #ff4f4f; }
+
+/* Legenda livelli */
+.lotm-sheet .skill-levels-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 10px;
+  color: var(--lotm-text-muted);
+  margin-bottom: 8px;
+  padding: 5px 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--lotm-border-dim);
+  border-radius: 4px;
+}
+.lotm-sheet .sll-sep { opacity: 0.4; }
+.lotm-sheet .sll-item b { color: var(--lotm-gold-dark); }
 
 /* Extraordinary properties textarea */
 .lotm-sheet .lotm-textarea {

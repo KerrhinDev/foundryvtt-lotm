@@ -1,4 +1,4 @@
-import { SEQUENCE_TABLE } from "../data/actor-character.mjs";
+import { SEQUENCE_TABLE, SKILL_LEVELS, skillLevelBonus } from "../data/actor-character.mjs";
 
 export class LotMCharacterSheet extends ActorSheet {
   /** @override */
@@ -50,6 +50,7 @@ export class LotMCharacterSheet extends ActorSheet {
         armor:      sys.defenseExtras?.armor ?? 0,
         dmgBonus:   sys.dmgBonus,
         mythicForm: sys.defenseExtras?.mythicForm ?? "",
+        movement:   sys.movement,
       };
 
       context.sequenceOptions = [
@@ -63,6 +64,41 @@ export class LotMCharacterSheet extends ActorSheet {
 
       context.seqInfo = sys.currentSequenceInfo;
       context.sequenceTable = SEQUENCE_TABLE;
+
+      // Opzioni livello skill per i dropdown
+      context.skillLevelOptions = Object.entries(SKILL_LEVELS).map(([key, info]) => ({
+        value: key,
+        label: `${info.label} (${info.bonus >= 0 ? "+" : ""}${info.bonus})`,
+      }));
+
+      // Opzioni attributo per i dropdown skill
+      context.attrOptions = [
+        { value: "str",  label: "FOR" },
+        { value: "agl",  label: "AGL" },
+        { value: "will", label: "VOL" },
+        { value: "phy",  label: "FIS" },
+        { value: "cha",  label: "CHA" },
+        { value: "ins",  label: "ISP" },
+        { value: "luck", label: "LCK" },
+        { value: "edu",  label: "EDU" },
+      ];
+
+      // Opzioni livello per dropdown Schivata (stessa lista)
+      context.skillLevelOptions = Object.entries(SKILL_LEVELS).map(([key, info]) => ({
+        value: key,
+        label: `${info.label} (${info.bonus >= 0 ? "+" : ""}${info.bonus})`,
+        selected: sys.dodgeLevel === key,
+      }));
+
+      // Calcola totale di ogni skill per il display (livello bonus + attributo finale + bonus extra)
+      const attrMap = {
+        str: sys.strFin, agl: sys.aglFin, will: sys.willFin, phy: sys.phyFin,
+        cha: sys.chaFin, ins: sys.insFin, luck: sys.luckFin, edu: sys.eduFin,
+      };
+      context.skills = (sys.skills ?? []).map(sk => ({
+        ...sk,
+        total: skillLevelBonus(sk.level) + (attrMap[sk.attribute] ?? 0) + (sk.bonus ?? 0),
+      }));
 
       const items = this.actor.items.contents;
       context.abilities  = items.filter(i => i.type === "ability");
@@ -121,6 +157,9 @@ export class LotMCharacterSheet extends ActorSheet {
       if (confirmed) item.delete();
     });
 
+    // Roll dado skill
+    on(".skill-roll", "click", this._onSkillRoll.bind(this));
+
     // Roll dice generico
     on(".roll-dice", "click", this._onRollDice.bind(this));
 
@@ -155,10 +194,29 @@ export class LotMCharacterSheet extends ActorSheet {
     await this.actor.rollDice(formula, label);
   }
 
+  async _onSkillRoll(ev) {
+    ev.preventDefault();
+    const idx   = parseInt(ev.currentTarget.dataset.index);
+    const skill = this.actor.system.skills?.[idx];
+    if (!skill) return;
+    const attrMap = {
+      str: this.actor.system.strFin, agl: this.actor.system.aglFin,
+      will: this.actor.system.willFin, phy: this.actor.system.phyFin,
+      cha: this.actor.system.chaFin, ins: this.actor.system.insFin,
+      luck: this.actor.system.luckFin, edu: this.actor.system.eduFin,
+    };
+    const attrVal  = attrMap[skill.attribute] ?? 0;
+    const lvlBonus = skillLevelBonus(skill.level);
+    const total    = lvlBonus + attrVal + (skill.bonus ?? 0);
+    const sign     = total >= 0 ? "+" : "";
+    const label    = skill.name || "Abilità";
+    await this.actor.rollDice(`1d20${sign}${total}`, label);
+  }
+
   async _onSkillAdd(ev) {
     ev.preventDefault();
     const skills = foundry.utils.deepClone(this.actor.system.skills ?? []);
-    skills.push({ name: "", edu: 0, ins: 0, ext: 0, prac: 0, numb: 0, corr: 0 });
+    skills.push({ name: "", level: "untrained", attribute: "agl", bonus: 0 });
     await this.actor.update({ "system.skills": skills });
   }
 

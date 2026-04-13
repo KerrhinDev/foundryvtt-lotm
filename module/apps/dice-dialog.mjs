@@ -80,8 +80,8 @@ async function executeRoll(actor, info, mod, state, resolve) {
 
     let mainRoll, altRoll;
     if (mode === "advantage" || mode === "disadvantage") {
-      const r1 = new Roll(`2d6 + ${totalMod}`);
-      const r2 = new Roll(`2d6 + ${totalMod}`);
+      const r1 = new Roll(`1d20 + ${totalMod}`);
+      const r2 = new Roll(`1d20 + ${totalMod}`);
       await r1.evaluate();
       await r2.evaluate();
       if (mode === "advantage") {
@@ -92,7 +92,7 @@ async function executeRoll(actor, info, mod, state, resolve) {
         altRoll  = r1.total >  r2.total ? r1 : r2;
       }
     } else {
-      mainRoll = new Roll(`2d6 + ${totalMod}`);
+      mainRoll = new Roll(`1d20 + ${totalMod}`);
       await mainRoll.evaluate();
     }
 
@@ -126,7 +126,7 @@ export async function openDiceDialog(actor, attrKey) {
       <div class="ld-attr-banner" style="border-left:4px solid ${info.color}">
         <span class="ld-attr-name">${info.label}</span>
         <span class="ld-attr-mod" style="color:${info.color}">${sign}${mod}</span>
-        <span class="ld-formula">2d6 ${sign}${mod}</span>
+        <span class="ld-formula">1d20 ${sign}${mod}</span>
       </div>
       <div class="ld-row">
         <div class="ld-field">
@@ -206,7 +206,7 @@ export async function openGenericRoll(actor, formula, label = "Tiro dado") {
           <span class="lrc-actor">${actor?.name ?? ""}</span>
           <span class="lrc-attr">${label}</span>
         </div>
-        <div class="lrc-formula">${formula}</div>
+        <div class="lrc-formula">${formula.replace(/2d6/gi, "1d20")}</div>
         <div class="lrc-total">${roll.total}</div>
       </div>
     `;

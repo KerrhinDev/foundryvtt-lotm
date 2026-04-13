@@ -95,10 +95,14 @@ export class LotMActor extends Actor {
     const newName = newInfo?.name ?? "Sconosciuto";
     const oldName = SEQUENCE_TABLE.find(s => s.seq === currentSeq)?.name ?? "";
 
-    // Aggiorna dati
+    // Aggiorna dati — incrementa anche HP (regola: +Fisico attuale per ogni avanzamento)
+    const currentPhyFin = sys.phyFin ?? 0;
+    const hpFromSeq     = (sys.hpFromSequences ?? 0) + currentPhyFin;
     await this.update({
-      "system.sequenceNumber": newSeq,
-      "system.sequenceName":   newName,
+      "system.sequenceNumber":   newSeq,
+      "system.sequenceName":     newName,
+      "system.hpFromSequences":  hpFromSeq,
+      "system.life.max":         (sys.baseHp ?? (10 + currentPhyFin)) + hpFromSeq,
     });
 
     // Chat card di avanzamento
