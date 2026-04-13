@@ -16,9 +16,12 @@ export class LotMActor extends Actor {
    * @override
    */
   getRollData() {
-    const data = super.getRollData();
+    // In Foundry V14, super.getRollData() restituisce un DataModel con getter readonly.
+    // Costruiamo un oggetto plain per evitare "Cannot set property which has only a getter".
     const sys  = this.system;
-    // PG — usa il valore finale calcolato dal getter
+    const data = {};
+
+    // PG — usa i valori calcolati dai getter del DataModel
     if (this.type === "character") {
       data.aglFin  = sys.aglFin  ?? 0;
       data.strFin  = sys.strFin  ?? 0;
