@@ -17,7 +17,7 @@ import { LotMTarotApp }      from "./apps/tarot-app.mjs";
    INIT
 ══════════════════════════════════════════════════════════════════ */
 Hooks.once("init", () => {
-  console.log("LotM | Inizializzazione del sistema Lord of the Mysteries v1.1.9");
+  console.log("LotM | Inizializzazione del sistema Lord of the Mysteries v1.2.0");
 
   // ── Esponi utilità globali ────────────────────────────────────
   game.lotm = {
@@ -119,7 +119,7 @@ Hooks.once("init", () => {
     "systems/lotm/templates/apps/tarot.hbs",
   ]);
 
-  console.log("LotM | Sistema inizializzato con successo v1.1.9");
+  console.log("LotM | Sistema inizializzato con successo v1.2.0");
 });
 
 /* ══════════════════════════════════════════════════════════════════
@@ -127,15 +127,19 @@ Hooks.once("init", () => {
 ══════════════════════════════════════════════════════════════════ */
 Hooks.once("ready", () => {
   console.log("LotM | Pronto!");
+});
 
-  // Comando /tarot via chat
-  Hooks.on("chatMessage", (chatLog, message, data) => {
-    const text = typeof message === "string" ? message : (data?.content ?? "");
-    if (text.trim().toLowerCase() === "/tarot") {
-      LotMTarotApp.open();
-      return false;
-    }
-  });
+/* ══════════════════════════════════════════════════════════════════
+   CHAT MESSAGE — Comando /tarot
+   Registrato a livello modulo (non dentro ready) per evitare
+   accumulo di listener su ricariche del mondo.
+══════════════════════════════════════════════════════════════════ */
+Hooks.on("chatMessage", (chatLog, message, data) => {
+  const text = typeof message === "string" ? message : (data?.content ?? "");
+  if (text.trim().toLowerCase() === "/tarot") {
+    LotMTarotApp.open();
+    return false;
+  }
 });
 
 /* ══════════════════════════════════════════════════════════════════

@@ -117,7 +117,6 @@ export class LotMCharacterSheet extends ActorSheet {
 
     // Ottieni l'elemento root — compatibile jQuery (V12/V13) e HTMLElement nativo (V14)
     const root = (html instanceof HTMLElement) ? html : (html?.[0] ?? null);
-    console.log("LotM | CharacterSheet activateListeners — html type:", typeof html, "| isJQuery:", typeof html?.find === "function", "| root:", root?.tagName ?? "NULL");
     if (!root) { console.error("LotM | activateListeners: root element non trovato"); return; }
 
     // Helper: registra un listener su tutti gli elementi che corrispondono al selettore
